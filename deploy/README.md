@@ -14,14 +14,14 @@ repo are already configured for that setup.
 2. Add the `location` block from [nginx-datafeedcl.conf.example](nginx-datafeedcl.conf.example)
    to datafeedcl.xyz's existing nginx server block, then `sudo nginx -t && sudo
    systemctl reload nginx`.
-3. Install the systemd service from [pocket-option-webapp.service.example](pocket-option-webapp.service.example)
-   (fill in the two placeholders first) so the app starts on boot and restarts
-   automatically if it ever crashes:
+3. Install the systemd service so the app starts on boot and restarts
+   automatically if it ever crashes — one command, run from inside the repo:
    ```bash
-   sudo cp deploy/pocket-option-webapp.service.example /etc/systemd/system/pocket-option-webapp.service
-   sudo systemctl daemon-reload
-   sudo systemctl enable --now pocket-option-webapp
+   sudo bash deploy/install-systemd.sh
    ```
+   It writes the unit file (auto-filling the paths/user for you), reloads
+   systemd, and starts the service. If you'd rather do it by hand, or want to
+   see what it writes, see [pocket-option-webapp.service.example](pocket-option-webapp.service.example).
 4. Verify: `https://datafeedcl.xyz/` should load the dashboard, and prices should
    start streaming (confirms the `/ws` WebSocket upgrade is working through nginx).
 
