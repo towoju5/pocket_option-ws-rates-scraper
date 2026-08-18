@@ -1,0 +1,266 @@
+# ⚡ PocketOption API SDK (Unofficial)
+
+[![PyPI version](https://img.shields.io/pypi/v/pocket-option.svg)](https://pypi.org/project/pocket-option)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pocket-option.svg)](https://pypi.org/project/pocket-option)
+[![Downloads](https://pepy.tech/badge/pocket-option)](https://pepy.tech/project/pocket-option)
+[![License](https://img.shields.io/github/license/lordralinc/pocket_option.svg)](https://github.com/lordralinc/pocket_option/blob/main/LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/lordralinc/pocket_option.svg?style=social)](https://github.com/lordralinc/pocket_option/stargazers)
+
+🌐 Available languages:
+[🇬🇧 English](README.md) | [🇷🇺 Русский](README.ru.md)
+
+Asynchronous **Python SDK for interacting with the PocketOption API** (unofficial).
+
+Fully type-hinted, built on `pydantic`, with middleware and event support.
+
+Supports Python 3.13+ and is fully asynchronous (`asyncio` + `aiohttp`).
+
+> ⚠️ **Disclaimer**
+
+> ⚠️ This project **is not a trading bot**.
+
+> ⚠️ It is **not affiliated with PocketOption** and is intended for integrations and analytical purposes only.
+
+> ⚠️ Investing in financial instruments carries risks. Past performance does not guarantee future returns, and asset values may fluctuate due to market conditions and movements in underlying instruments. Any forecasts or illustrations are for informational purposes only and do not constitute guarantees or investment advice. This project is **not an invitation or recommendation to invest**. Before making investment decisions, consult financial, legal, and tax professionals to determine whether such products suit your goals, risk tolerance, and personal circumstances.
+
+> P.S. Their demo mode is surprisingly fun to play around with 😎
+
+## 🚀 Features
+
+- 🔌 Connects to PocketOption WebSocket API (via `socket.io`)
+
+- 🔐 Session-based authentication
+
+- 💹 Order and trade management (demo / real account)
+
+- 📊 Market stream subscriptions
+
+- 💾 Built-in in-memory storages (`MemoryCandleStorage`, `MemoryDealsStorage`)
+
+- ⚙️ Middleware chain for event and request interception
+
+- 💬 Event model with decorators (`@client.on.*`)
+
+- ✅ Strict type hints
+
+## 🔑 Getting Session ID and UID
+
+To interact with the API, you need a valid session payload from the browser.
+
+1. Open Pocket Option in your browser
+2. Open Developer Tools
+3. Go to the **Network** tab
+4. Filter by **WebSocket (WS)**
+5. Find a request to {region}...
+6. Fimd message containing `42["auth"`
+7. Copy the `session` and `uid`
+
+**Example**:
+
+```json
+42["auth",{"session":"abcd1234efgh5678","isDemo":1,"uid":1234589,"platform":1}]
+```
+
+## ⚙️ Usage Example
+
+```python
+import asyncio
+import logging
+import os
+import random
+
+from pocket_option import PocketOptionClient
+from pocket_option.constants import Regions
+from pocket_option.contrib.default_init import default_init
+from pocket_option.models import (
+    Asset,
+    AuthorizationData,
+    DealAction,
+    UpdateCloseValueItem,
+)
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s | %(levelname)s | %(message)s",
+)
+
+logger = logging.getLogger(__name__)
+rng = random.SystemRandom()
+client = PocketOptionClient(logger=True)
+
+ASSET = Asset.AUDCAD_otc
+TRADE_AMOUNT = 10
+EXPIRATION_TIME = 60
+CANDLE_PERIOD = 30
+OPTION_TYPE = 100
+IS_DEMO = 1
+
+default_init(
+    client,
+    authorization=AuthorizationData.model_validate(
+        {
+            "session": os.environ["PO_SESSION"],
+            "isDemo": IS_DEMO,
+            "uid": int(os.environ["PO_UID"]),
+            "platform": 2,
+            "isFastHistory": True,
+            "isOptimized": True,
+        },
+    ),
+    sub_assets=[ASSET],
+    sub_period=CANDLE_PERIOD,
+)
+
+
+@client.on.update_close_value
+async def on_update_close_value(
+    assets: list[UpdateCloseValueItem],
+):
+    logger.debug("Assets updated: %s", assets)
+
+
+def get_signal() -> DealAction | None:
+    return rng.choice(
+        [
+            DealAction.CALL,
+            DealAction.PUT,
+            None,
+        ],
+    )
+
+
+async def execute_trade(direction: DealAction):
+    logger.info(
+        "Opening %s trade",
+        direction.name,
+    )
+    deal = await client.deals.open_deal(
+        asset=ASSET,
+        amount=TRADE_AMOUNT,
+        action=direction,
+        is_demo=IS_DEMO,
+        option_type=OPTION_TYPE,
+        time=EXPIRATION_TIME,
+    )
+    logger.info(
+        "Deal opened: %s",
+        deal,
+    )
+    result = await client.deals.check_deal_result(
+        wait_time=EXPIRATION_TIME + 5,
+        deal=deal,
+    )
+    logger.info(
+        "Deal result: %s",
+        result,
+    )
+
+
+async def trader_loop():
+    await client.authorized_event.wait()
+    logger.info("Trader started")
+    while True:
+        try:
+            signal = get_signal()
+            if signal is None:
+                await asyncio.sleep(5)
+                continue
+            await execute_trade(signal)
+            await asyncio.sleep(5)
+        except Exception:
+            logger.exception("Trading error")
+            await asyncio.sleep(10)
+
+
+async def main():
+    try:
+        await client.connect(Regions.DEMO)
+        await trader_loop()
+    except KeyboardInterrupt:
+        logger.info("Stopping...")
+    finally:
+        await client.disconnect()
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
+
+```
+
+## 🖥️ Live Assets & Prices Web App
+
+`examples/webapp.py` serves a browser dashboard for browsing assets and streaming live
+prices, plus a raw WebSocket (`/ws`) you can connect to from your own client — with an
+IP/hostname allowlist for restricting access when exposed beyond localhost.
+
+Run it with `./start_webapp.sh`. See **[WEBAPP.md](WEBAPP.md)** for setup, the WebSocket
+protocol, allowlist configuration, and notes on running it (and `examples/main.py`) 24/7.
+
+## 📤 Available emit events
+
+<!-- START_AVAILABLE_EMIT_EVENTS -->
+
+| Method | Event |  Category  | Description |
+|--------|-------|:----------:|-------------|
+| `client.emit.ai_strategy_multi_get_state` | `ai-strategy-multi/get-state` | ai | Get AI strategy state. |
+| `client.emit.change_asset` | `changeSymbol` | assets | Changes the active trading asset and timeframe. |
+| `client.emit.subscribe_for_market_sentiment` | `subfor` | assets | Subscribes to market sentiment updates for an asset. |
+| `client.emit.subscribe_to_asset` | `subscribeSymbol` | assets | Subscribes to real-time updates for a trading asset. |
+| `client.emit.unsubscribe_for_market_sentiment` | `unsubfor` | assets | Removes market sentiment subscription for an asset. |
+| `client.emit.unsubscribe_from_asset` | `unSubscribeSymbol` | assets | Unsubscribes from real-time updates for a trading asset. |
+| `client.emit.auth` | `auth` | common | Authorizes the client session. |
+| `client.emit.demo_refill_balance` | `td/refill` | common | Refill demo account balance. |
+| `client.emit.load_history_period` | `loadHistoryPeriod` | common | Requests historical market data for a specific period. |
+| `client.emit.ps` | `ps` | common | Sends a heartbeat request to keep the connection alive. |
+| `client.emit.update_balance` | `updateBalance` | common | Request balance update. |
+| `client.emit.copy_signal` | `copySignalOrder` | deals | Creates a deal from a copy trading signal. |
+| `client.emit.deals_ai` | `deals/ai` | deals | AI deal operation. |
+| `client.emit.deals_copy` | `copyorder` | deals | Copy existing order |
+| `client.emit.deals_double_up` | `deals/double-up` | deals | Double existing deal. |
+| `client.emit.deals_open` | `openOrder` | deals | Creates a new trading deal. |
+| `client.emit.deals_pending_cancel` | `cancelPendingOrder` | deals | Cancel pending order. |
+| `client.emit.deals_pending_open` | `openPendingOrder` | deals | Create pending order. |
+| `client.emit.deals_rollover` | `deals/rollover` | deals | Rollover existing deal. |
+| `client.emit.deals_update_opened` | `updateOpenedDeals` | deals | - |
+| `client.emit.social_disable_only_watched` | `social/disable-only-watched` | deals | Disable watched filter. |
+| `client.emit.social_enable_only_watched` | `social/enable-only-watched` | deals | Enable watched filter. |
+| `client.emit.update_closed_expresses` | `updateClosedExpresses` | deals | - |
+| `client.emit.indicator_create` | `indicator/create` | indicator | - |
+| `client.emit.indicator_load` | `indicator/load` | indicator | Indicates that indicator data has been loaded by the platform. |
+| `client.emit.signals_stats` | `signals/stats` | signals | - |
+| `client.emit.signals_subscribe` | `signals/subscribe` | signals | - |
+| `client.emit.signals_unsubscribe` | `signals/unsubscribe` | signals | - |
+| `client.emit.favorite_load` | `favorite/load` | ui | Indicates that favorite has been loaded by the platform. |
+| `client.emit.price_alert_add` | `price-alert/add` | ui | - |
+| `client.emit.price_alert_load` | `price-alert/load` | ui | Indicates that price alert data has been loaded by the platform. |
+| `client.emit.price_alert_remove` | `price-alert/remove` | ui | - |
+
+<!-- END_AVAILABLE_EMIT_EVENTS -->
+
+## 📥 Available on events
+
+<!-- START_AVAILABLE_ON_EVENTS -->
+
+| Method | Event |  Category  | Description |
+|--------|-------|:----------:|-------------|
+| `client.on.assets_update` | `updateAssets` | assets | Triggered when available trading assets metadata is updated. |
+| `client.on.change_market_sentiment` | `chafor` | assets | Triggered when market sentiment data is updated. |
+| `client.on.update_close_value` | `updateStream` | assets | Triggered when real-time price stream values are updated. |
+| `client.on.update_history_new_fast` | `updateHistoryNewFast` | assets | Triggered when fast historical market data is received. |
+| `client.on.balance_success_update` | `successupdateBalance` | common | Triggered when account balance information is updated. |
+| `client.on.connect` | `connect` | common | Triggered when the Socket.IO connection is established. |
+| `client.on.disconnect` | `disconnect` | common | Triggered when the Socket.IO connection is closed. |
+| `client.on.load_history_period_fast` | `loadHistoryPeriodFast` | common | Triggered when historical market data for a specific period is loaded. |
+| `client.on.success_auth` | `successauth` | common | Triggered after successful account authorization. |
+| `client.on.deals_fail_open` | `failopenOrder` | deals | Triggered when a deal fails to open. |
+| `client.on.deals_success_close` | `successcloseOrder` | deals | Triggered after one or more deals are successfully closed. |
+| `client.on.deals_success_open` | `successopenOrder` | deals | Triggered after a new deal is successfully opened. |
+| `client.on.deals_update_closed` | `updateClosedDeals` | deals | Triggered when closed deals information is updated. |
+| `client.on.deals_update_opened` | `updateOpenedDeals` | deals | Triggered when the list of opened deals is updated. |
+| `client.on.price_alert_added` | `successprice-alert/add` | ui | - |
+
+<!-- END_AVAILABLE_ON_EVENTS -->
+
+## 📜 License
+
+**MIT License** — do whatever you want, but at your own risk.

@@ -1,0 +1,166 @@
+[project]
+name = "pocket-option"
+version = "0.4.0"
+description = "Async API client for Pocket Option platform"
+authors = [{ name = "Yury \"lordralinc\" Yushmanov" }]
+license = "MIT"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "aiohttp[speedups] (>=3.13.1,<4.0.0)",
+    "brotli (>=1.2.0,<2.0.0)",
+    "pydantic (>=2.12.3,<3.0.0)",
+    "python-socketio[asyncio-client] (>=5.14.2,<6.0.0)",
+    "pytz (>=2025.2,<2027.0)",
+]
+keywords = [
+    "pocket option",
+    "pocket-option",
+    "pocketoption",
+    "trading",
+    "binary options",
+    "options",
+    "finance",
+    "fintech",
+    "api",
+    "api client",
+    "websocket",
+    "websocket client",
+    "market data",
+    "quotes",
+    "forex",
+    "crypto trading",
+    "crypto",
+    "exchange",
+    "python client",
+]
+
+[project.urls]
+Homepage = "https://github.com/lordralinc/pocket_option"
+Repository = "https://github.com/lordralinc/pocket_option"
+Issues = "https://github.com/lordralinc/pocket_option/issues"
+Changelog = "https://github.com/lordralinc/pocket_option/releases"
+
+[project.optional-dependencies]
+ujson = ["ujson (>=5.11.0,<6.0.0)"]
+
+
+[dependency-groups]
+dev = [
+    "black (>=25.9.0,<27.0.0)",
+    "isort (>=7.0.0,<9.0.0)",
+    "jinja2 (>=3.1.6,<4.0.0)",
+    "pre-commit (>=4.3.0,<5.0.0)",
+    "pytest (>=9.1.1,<10.0.0)",
+    "rich (>=14.2.0,<16.0.0)",
+    "ruff (>=0.14.1,<0.17.0)",
+]
+detect-secrets = ["pre-commit (>=4.4.0,<5.0.0)"]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 120
+target-version = ["py313"]
+
+[tool.isort]
+profile = "black"
+line_length = 120
+multi_line_output = 3
+include_trailing_comma = true
+use_parentheses = true
+ensure_newline_before_comments = true
+
+[tool.ruff]
+line-length = 120
+respect-gitignore = true
+target-version = "py313"
+lint.select = [
+    "ALL",
+    "B",
+    "BLE",
+    "C4",
+    "DTZ",
+    "E",
+    "ERA",
+    "F",
+    "FURB",
+    "I",
+    "PT",
+    "RUF",
+    "S",
+    "T10",
+    "T20",
+    "UP",
+    "W",
+]
+lint.ignore = [
+    "ANN201",
+    "ANN202",
+    "ANN204",
+    "ANN401",
+    "C408",
+    "C901",
+    "COM812",
+    "CPY001",
+    "D",
+    "DTZ005",
+    "DTZ006",
+    "EM101",
+    "EM102",
+    "FBT",
+    "G004",
+    "ICN001",
+    "PGH003",
+    "PLR0912",
+    "PLR0913",
+    "PLR0917",
+    "RET503",
+    "RUF001",
+    "RUF002",
+    "RUF003",
+    "S110",
+    "TRY003",
+    "TRY301",
+    "ERA001"
+]
+lint.fixable = [
+    "I",
+    "RUF022",
+    "UP035"
+]
+
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = [
+    "S101",
+    "PLR2004",
+    "D",
+]
+"test_*.py" = [
+    "S101",
+    "PLR2004",
+    "D",
+]
+"examples/**/*.py" = ["INP001"]
+"pocket_option/generated_client.py" = ["ERA001"]
+"scripts/**/*.py" = ["ALL"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+
+[tool.ruff.lint.pep8-naming]
+classmethod-decorators = [
+    "classmethod",
+    "pydantic.field_validator",
+    "pydantic.model_validator",
+]
+
+
+[tool.ruff.lint.flake8-type-checking]
+exempt-modules = ["typing_extensions", "typing"]
