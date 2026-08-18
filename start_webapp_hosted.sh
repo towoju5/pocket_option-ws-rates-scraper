@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
-# Production launcher for a hosted platform (VPS, cloud box, etc.): binds on all
-# interfaces and exposes the WebSocket as wss://, either by auto-obtaining a free
-# Let's Encrypt cert, pointing at one you already have, or behind a reverse proxy.
+# Production launcher for a hosted platform (VPS, cloud box, etc.): exposes the
+# WebSocket as wss://, either by auto-obtaining a free Let's Encrypt cert, pointing
+# at one you already have, or behind a reverse proxy. When a reverse proxy handles
+# TLS (Option C), this process binds 127.0.0.1 only — see deploy/ for the systemd
+# unit and nginx snippet that pair with that setup.
 set -euo pipefail
 
 # --- Edit these -------------------------------------------------------------
-BASE_URL="https://your-domain.example.com"   # public URL this will be reachable at
+BASE_URL="https://datafeedcl.xyz"             # public URL this will be reachable at
 PORT=8081                                     # port this process binds to
 
 # --- TLS: pick at most ONE of the two options below ---------------------------
@@ -14,7 +16,11 @@ PORT=8081                                     # port this process binds to
 # this host, port 80 is free, certbot is installed, and root/sudo. Set an email
 # to enable this — Let's Encrypt sends expiry notices to it, and issuing a cert
 # means agreeing to their Subscriber Agreement (--agree-tos, applied below).
-LETSENCRYPT_EMAIL="towojuads@gmail.com"
+# Left blank: the VPS already terminates TLS for datafeedcl.xyz via its own
+# reverse proxy (see Option C below, and deploy/nginx-datafeedcl.conf.example),
+# so this process should just speak plain HTTP on 127.0.0.1 and let that proxy
+# handle certs. Only fill this in if this process itself should own the cert.
+LETSENCRYPT_EMAIL=""
 
 # Option B: point at a cert you already have (Let's Encrypt or otherwise).
 # Leave both blank if using Option A, or if a reverse proxy in front handles TLS.
@@ -87,17 +93,21 @@ if [ -n "$LETSENCRYPT_EMAIL" ] && [ -z "$SSL_CERT_PATH" ] && [ -z "$SSL_KEY_PATH
     obtain_letsencrypt_cert "$host" "$LETSENCRYPT_EMAIL"
 fi
 
-export WEBAPP_HOST="0.0.0.0"
 export WEBAPP_PORT="$PORT"
 export WEBAPP_AUTO_OPEN="0"
 
 if [ -n "$SSL_CERT_PATH" ] && [ -n "$SSL_KEY_PATH" ]; then
+    # This process terminates TLS itself, so it must be directly reachable.
+    export WEBAPP_HOST="0.0.0.0"
     export WEBAPP_SSL_CERT="$SSL_CERT_PATH"
     export WEBAPP_SSL_KEY="$SSL_KEY_PATH"
     echo "Terminating TLS in-process."
     echo "Dashboard: https://${host}:${PORT}/"
     echo "WebSocket: wss://${host}:${PORT}/ws"
 else
+    # A reverse proxy on this same host handles TLS and forwards to us, so there's
+    # no need (and no security benefit) to also expose this port to the internet.
+    export WEBAPP_HOST="127.0.0.1"
     echo "No cert configured — expecting a reverse proxy to terminate TLS."
     echo "Set WEBAPP_TRUST_PROXY=1 in .env once that proxy is in place (see WEBAPP.md),"
     echo "so the IP allowlist sees real client IPs instead of the proxy's."
@@ -105,5 +115,5 @@ else
     echo "WebSocket: ${BASE_URL/https:/wss:}/ws"
 fi
 
-echo "Starting web app on 0.0.0.0:${PORT}..."
+echo "Starting web app on ${WEBAPP_HOST}:${PORT}..."
 exec python examples/webapp.py

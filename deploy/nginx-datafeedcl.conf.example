@@ -1,0 +1,21 @@
+# Add this `location` block inside the EXISTING `server { listen 443 ssl; ... }`
+# block for datafeedcl.xyz on the VPS (find it with e.g. `sudo nginx -T | less`
+# or `ls /etc/nginx/sites-enabled/`) — do NOT create a second `server` block for
+# the same domain/port, nginx will refuse to start with a duplicate.
+#
+# The Upgrade/Connection headers are required for /ws (the WebSocket route); if
+# they're missing, the dashboard at "/" will load fine but live prices won't.
+#
+#   location / {
+#       proxy_pass http://127.0.0.1:8081;
+#       proxy_http_version 1.1;
+#       proxy_set_header Host $host;
+#       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+#       proxy_set_header X-Forwarded-Proto $scheme;
+#       proxy_set_header Upgrade $http_upgrade;
+#       proxy_set_header Connection "upgrade";
+#       proxy_read_timeout 3600s;   # keep long-lived WebSocket connections open
+#   }
+#
+# After editing:
+#   sudo nginx -t && sudo systemctl reload nginx

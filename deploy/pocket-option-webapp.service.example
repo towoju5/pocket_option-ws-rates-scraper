@@ -1,0 +1,30 @@
+# Runs the live-prices web app forever on the VPS: starts on boot, and restarts
+# automatically if it ever crashes or the process is killed.
+#
+# Install (on the VPS, as a user with sudo):
+#   1. sudo cp deploy/pocket-option-webapp.service.example /etc/systemd/system/pocket-option-webapp.service
+#   2. Edit the copy: replace <deploy-user> and /path/to/pocket_option-0.4.0 below with
+#      the real values (whoever this runs as, and where you cloned/copied the repo).
+#   3. sudo systemctl daemon-reload
+#   4. sudo systemctl enable --now pocket-option-webapp
+#
+# Check on it:
+#   sudo systemctl status pocket-option-webapp
+#   sudo journalctl -u pocket-option-webapp -f
+
+[Unit]
+Description=PocketOption live prices web app
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=<deploy-user>
+WorkingDirectory=/path/to/pocket_option-0.4.0
+EnvironmentFile=/path/to/pocket_option-0.4.0/.env
+ExecStart=/bin/bash /path/to/pocket_option-0.4.0/start_webapp_hosted.sh
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
