@@ -32,6 +32,25 @@ AUTO_OPEN_BROWSER = os.environ.get("WEBAPP_AUTO_OPEN", "1") != "0"
 STREAM_PERIOD = 5
 TICK_HISTORY_SIZE = 50
 
+# Assets to keep streaming (and buffering into tick_history) at all times, independent
+# of whether any browser/WS client is currently watching them — so the feed stays warm
+# for whoever connects next instead of only running while someone's got the UI open.
+# Special value "all" keeps every currently-active asset streaming, kept in sync as
+# assets go active/inactive (see on_assets_update below) — same set "Watch all active"
+# subscribes to in the UI, just automatic instead of requiring someone to click it.
+_ALWAYS_ON_RAW = os.environ.get("WEBAPP_ALWAYS_ON_ASSETS", "").strip()
+ALWAYS_ON_ALL = _ALWAYS_ON_RAW.lower() in ("all", "*")
+if ALWAYS_ON_ALL:
+    ALWAYS_ON_ASSETS: set[Asset] = set()
+else:
+    try:
+        ALWAYS_ON_ASSETS = {Asset(sym.strip()) for sym in _ALWAYS_ON_RAW.split(",") if sym.strip()}
+    except ValueError as exc:
+        raise SystemExit(
+            f"Invalid WEBAPP_ALWAYS_ON_ASSETS: {exc}. Use symbols from GET /api/assets, "
+            f"comma-separated, or 'all'.",
+        ) from None
+
 # Native TLS (wss:// without a reverse proxy in front). Both must be set to enable it.
 SSL_CERT_PATH = os.environ.get("WEBAPP_SSL_CERT", "")
 SSL_KEY_PATH = os.environ.get("WEBAPP_SSL_KEY", "")
@@ -234,6 +253,10 @@ def asset_payload(item: UpdateAssetItem) -> dict:
 async def on_assets_update(items: list[UpdateAssetItem]):
     for item in items:
         await broadcast_all(asset_payload(item))
+    if ALWAYS_ON_ALL:
+        newly_active = [item.asset for item in items if item.active is not False]
+        if newly_active:
+            await asyncio.gather(*(subscribe(asset) for asset in newly_active), return_exceptions=True)
 
 
 @client.on.success_auth
@@ -462,12 +485,19 @@ async def open_browser_when_ready():
         logger.debug("Could not auto-open browser", exc_info=True)
 
 
+async def subscribe_always_on():
+    for asset in ALWAYS_ON_ASSETS:
+        await subscribe(asset)
+
+
 async def start_client(app: web.Application):
     async def run():
         await client.connect(Regions.DEMO)
         await client.wait()
 
     app["client_task"] = asyncio.create_task(run())
+    if ALWAYS_ON_ASSETS:
+        asyncio.create_task(subscribe_always_on())  # noqa: RUF006
     if AUTO_OPEN_BROWSER:
         asyncio.create_task(open_browser_when_ready())  # noqa: RUF006
 

@@ -25,6 +25,7 @@ By default it binds to `127.0.0.1:8081` and opens a browser tab automatically.
 | `WEBAPP_ALLOWED_CLIENTS` | *(unset)*     | Comma-separated, always-allowed client list. See below. Unset (and no dynamic entries) = open access. |
 | `WEBAPP_ADMIN_PASSWORD`  | *(unset)*     | Enables `/admin`. Unset = admin panel disabled (login returns 503). |
 | `WEBAPP_ADMIN_SESSION_HOURS` | `12`      | How long an admin login session lasts before you must log in again. |
+| `WEBAPP_ALWAYS_ON_ASSETS` | *(unset)* | Comma-separated asset symbols, or `all`, to keep streaming/buffered at all times — even with nobody connected. Unset = only streams what someone's actively watching, and stops the moment they all disconnect. See below. |
 | `WEBAPP_SSL_CERT` / `WEBAPP_SSL_KEY` | *(unset)* | Paths to a cert/key PEM pair. Set both to have the app terminate TLS itself (serves `https://`/`wss://` directly, no reverse proxy needed). |
 | `WEBAPP_TRUST_PROXY`     | `0`           | Set to `1` **only** when deployed behind a reverse proxy that sets `X-Forwarded-For`/`-Proto` — trusts those headers for the IP allowlist and secure-cookie detection. Never enable this without an actual proxy in front; otherwise anyone can spoof their IP and bypass the allowlist. |
 
@@ -142,6 +143,21 @@ echo '{"action":"subscribe","asset":"EURUSD_otc"}' | websocat ws://127.0.0.1:808
 
 If your client's IP isn't in `WEBAPP_ALLOWED_CLIENTS`, the initial connection is rejected
 with an HTTP 403 before the WebSocket handshake completes.
+
+## Keeping assets warm without a UI client
+
+By default, this app only subscribes to an asset upstream while at least one browser/WS
+client is actively watching it — the moment the last watcher disconnects, it unsubscribes.
+That's fine for casual local use, but means a client connecting to `/ws` and subscribing
+to a symbol nobody's currently watching gets a cold start: no buffered `history`, and a
+short delay before the first `price` tick while the upstream subscribe completes.
+
+Set `WEBAPP_ALWAYS_ON_ASSETS=all` to keep every currently-active asset streaming and
+buffered at all times, regardless of connected clients — new clients get already-buffered
+`history` immediately on subscribe. Set it to a comma-separated list instead (symbols from
+`GET /api/assets`) to warm only specific assets. This trades a bit of constant upstream
+bandwidth/connections for always-warm data; for a small watchlist it's negligible, for
+"all" it's every tradable asset, all the time.
 
 ## Deploying to a hosted platform (making wss:// available)
 
