@@ -574,7 +574,8 @@ const watched = new Map();
 let ws;
 
 function connect() {
-  ws = new WebSocket(`ws://${location.host}/ws`);
+  const wsProtocol = location.protocol === "https:" ? "wss:" : "ws:";
+  ws = new WebSocket(`${wsProtocol}//${location.host}/ws`);
   const status = document.getElementById("status");
   ws.onopen = () => { status.textContent = "connected"; status.classList.add("connected"); };
   ws.onclose = () => { status.textContent = "reconnecting…"; status.classList.remove("connected"); setTimeout(connect, 1500); };
