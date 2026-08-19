@@ -5,6 +5,7 @@ PocketOption using this SDK and exposes:
 
 - `GET /` — a browser dashboard: pick assets from a searchable list, watch live prices.
 - `GET /api/assets` — JSON snapshot of all known assets.
+- `GET /api/tick` — price closest to a given timestamp, from buffered history.
 - `GET /ws` — a raw WebSocket you can connect to directly from your own client/script.
 - `GET /admin` — a password-protected page for managing the IP allowlist at runtime.
 
@@ -143,6 +144,29 @@ echo '{"action":"subscribe","asset":"EURUSD_otc"}' | websocat ws://127.0.0.1:808
 
 If your client's IP isn't in `WEBAPP_ALLOWED_CLIENTS`, the initial connection is rejected
 with an HTTP 403 before the WebSocket handshake completes.
+
+## Looking up a price at a specific time
+
+`GET /api/tick?asset=<symbol>&timestamp=<unix-seconds>` returns the buffered price closest
+to the timestamp you ask for — useful for "what was the price around time X" without
+having to be connected over `/ws` when it happened.
+
+```bash
+curl "https://datafeedcl.xyz/api/tick?asset=EURUSD_otc&timestamp=1755550000"
+```
+
+```json
+{"asset": "EURUSD_otc", "requested_timestamp": 1755550000.0, "value": "1.08423", "timestamp": 1755549998.4, "delta_seconds": -1.6}
+```
+
+`delta_seconds` (actual minus requested) tells you how far off the match is — check it if
+you need to know whether the result is a close match or a stale fallback.
+
+This searches each asset's buffered price history — up to the last 10,000 updates, kept in
+memory only (lost on restart) — so it only has data for **assets that have streamed at
+least once since this process started**. An asset nobody's ever watched, and that isn't in
+`WEBAPP_ALWAYS_ON_ASSETS`, returns `404`. Setting `WEBAPP_ALWAYS_ON_ASSETS=all` (see below)
+is the easiest way to make sure every asset has something to look up.
 
 ## Keeping assets warm without a UI client
 

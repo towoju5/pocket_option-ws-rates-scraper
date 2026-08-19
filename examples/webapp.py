@@ -346,6 +346,39 @@ async def whoami(request: web.Request) -> web.Response:
     return web.json_response({"ip": get_client_ip(request)})
 
 
+async def tick_at(request: web.Request) -> web.Response:
+    asset_param = request.query.get("asset")
+    timestamp_param = request.query.get("timestamp")
+    if not asset_param or not timestamp_param:
+        raise web.HTTPBadRequest(text="Query params 'asset' and 'timestamp' (unix seconds) are required")
+    try:
+        asset = Asset(asset_param)
+    except ValueError:
+        raise web.HTTPBadRequest(text=f"Unknown asset {asset_param!r}. See GET /api/assets.") from None
+    try:
+        target = float(timestamp_param)
+    except ValueError:
+        raise web.HTTPBadRequest(text="'timestamp' must be a unix timestamp in seconds") from None
+
+    items = list(await client.candles.get_items(asset))
+    if not items:
+        raise web.HTTPNotFound(
+            text=f"No buffered price data for {asset.value} yet (only assets that have streamed "
+            f"since this process started have any — see WEBAPP_ALWAYS_ON_ASSETS).",
+        )
+
+    closest = min(items, key=lambda item: abs(item.timestamp - target))
+    return web.json_response(
+        {
+            "asset": asset.value,
+            "requested_timestamp": target,
+            "value": str(closest.value),
+            "timestamp": closest.timestamp,
+            "delta_seconds": closest.timestamp - target,
+        },
+    )
+
+
 async def admin_page(_: web.Request) -> web.Response:
     return web.Response(text=ADMIN_HTML, content_type="text/html")
 
@@ -512,6 +545,7 @@ def create_app() -> web.Application:
     app.router.add_get("/", index)
     app.router.add_get("/api/assets", list_assets)
     app.router.add_get("/api/whoami", whoami)
+    app.router.add_get("/api/tick", tick_at)
     app.router.add_get("/ws", ws_handler)
 
     app.router.add_get("/admin", admin_page)
