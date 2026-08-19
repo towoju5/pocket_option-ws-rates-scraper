@@ -525,8 +525,15 @@ async def subscribe_always_on():
 
 async def start_client(app: web.Application):
     async def run():
-        await client.connect(Regions.DEMO)
-        await client.wait()
+        while True:
+            try:
+                await client.connect(Regions.DEMO)
+                await client.wait()
+            except asyncio.CancelledError:
+                raise
+            except Exception:
+                logger.exception("Upstream PocketOption connection failed; retrying in 5s")
+            await asyncio.sleep(5)
 
     app["client_task"] = asyncio.create_task(run())
     if ALWAYS_ON_ASSETS:

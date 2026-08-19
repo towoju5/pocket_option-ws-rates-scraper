@@ -110,9 +110,13 @@ def get_server_time() -> float:
 @typing.overload
 def fix_timestamp(ts: float) -> float: ...
 @typing.overload
+def fix_timestamp(ts: int) -> float: ...
+@typing.overload
 def fix_timestamp(ts: datetime.datetime) -> datetime.datetime: ...
 def fix_timestamp(ts: typing.Any) -> typing.Any:
-    if isinstance(ts, float):
+    if isinstance(ts, bool):
+        raise TypeError(f"Unsupported type: {type(ts)}")
+    if isinstance(ts, (float, int)):
         return ts + TIMESTAMP_OFFSET
     if isinstance(ts, datetime.datetime):
         return datetime.datetime.fromtimestamp(ts.timestamp() + TIMESTAMP_OFFSET, tz=pytz.UTC)
