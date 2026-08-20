@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import contextlib
 import enum
+import logging
 import typing
 
 import pydantic
@@ -17,6 +18,8 @@ __all__ = (
     "FixTypesMiddleware",
     "MakeJsonOnMiddleware",
 )
+
+_logger = logging.getLogger("pocket_option.middlewares")
 
 
 UPDATE_ASSETS_KEYS: typing.Final[list[str]] = [
@@ -62,19 +65,39 @@ class FixTypesMiddleware(Middleware):
     async def on(self, event: str, data: JsonValue | None) -> JsonValue | None:  # type: ignore
         if data is None:
             return None
+        if event in ("updateStream", "updateAssets", "chafor") and not isinstance(data, list):
+            # The upstream server occasionally sends a malformed/unexpected payload shape
+            # for these events (e.g. a raw string instead of a list of tuples). Skip it
+            # instead of raising per-item below: with WEBAPP_ALWAYS_ON_ASSETS=all this can
+            # otherwise fire hundreds of times per burst (once per subscribed asset, once
+            # per registered handler), and logger.exception's traceback formatting for that
+            # many exceptions synchronously stalls the whole event loop.
+            _logger.warning("Ignoring malformed %r payload: %r", event, data)
+            return []
         if event == "updateStream":
-            return [
-                {
-                    "asset": it[0],
-                    "timestamp": fix_timestamp(it[1]),
-                    "value": it[2],
-                }
-                for it in typing.cast("list[tuple[str, float, float]]", data)
-            ]
+            items = []
+            for it in typing.cast("list", data):
+                if not isinstance(it, (list, tuple)) or len(it) < 3:
+                    _logger.warning("Ignoring malformed updateStream item: %r", it)
+                    continue
+                items.append({"asset": it[0], "timestamp": fix_timestamp(it[1]), "value": it[2]})
+            return items
         if event == "updateAssets":
-            return [dict(zip(UPDATE_ASSETS_KEYS, it, strict=True)) for it in typing.cast("list[list]", data)]
+            items = []
+            for it in typing.cast("list", data):
+                if not isinstance(it, (list, tuple)) or len(it) != len(UPDATE_ASSETS_KEYS):
+                    _logger.warning("Ignoring malformed updateAssets item: %r", it)
+                    continue
+                items.append(dict(zip(UPDATE_ASSETS_KEYS, it, strict=True)))
+            return items
         if event == "chafor":
-            return [dict(zip(["asset", "value"], it, strict=True)) for it in typing.cast("list[list]", data)]
+            items = []
+            for it in typing.cast("list", data):
+                if not isinstance(it, (list, tuple)) or len(it) != 2:
+                    _logger.warning("Ignoring malformed chafor item: %r", it)
+                    continue
+                items.append(dict(zip(["asset", "value"], it, strict=True)))
+            return items
 
         return data
 

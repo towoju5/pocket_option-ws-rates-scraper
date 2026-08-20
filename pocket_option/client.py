@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import functools
 import logging
+import time
 import typing
 from inspect import isclass
 
@@ -192,6 +193,14 @@ class BasePocketOptionClient:
         self.filter_events_log = filter_events_log or ["updateStream"]
 
         self.emit_lock = asyncio.Lock()
+
+        # Caps how often a handler's exceptions get a full traceback formatted and logged
+        # (the expensive part of logger.exception). Without this, a burst of malformed
+        # upstream data can make every one of a handler's failures format+log a full
+        # traceback back-to-back with nothing to yield to, stalling the event loop (and
+        # anything else on it, like an aiohttp server sharing the loop) for the duration.
+        self._error_log_interval = 1.0
+        self._error_log_state: dict[str, tuple[float, int]] = {}
 
     @property
     def candles(self) -> CandleStorage:
@@ -400,6 +409,30 @@ class BasePocketOptionClient:
         self._authorized_event.clear()
         await self._handle_event("disconnect")
 
+    def _log_handler_error(self, event_name: str, callback_name: str) -> None:
+        """Log a handler's exception, rate-limited per handler to at most one full
+        (expensive, traceback-formatting) log entry per `_error_log_interval` seconds.
+
+        Must be called from an `except` block so the traceback is available to logging.
+        """
+        key = f"{event_name}:{callback_name}"
+        now = time.monotonic()
+        last_logged_at, suppressed = self._error_log_state.get(key, (0.0, 0))
+        if now - last_logged_at < self._error_log_interval:
+            self._error_log_state[key] = (last_logged_at, suppressed + 1)
+            return
+        if suppressed:
+            self.logger.exception(
+                "Error on handler %s, %s (+%d more in the last %.1fs, suppressed)",
+                event_name,
+                callback_name,
+                suppressed,
+                now - last_logged_at,
+            )
+        else:
+            self.logger.exception("Error on handler %s, %s", event_name, callback_name)
+        self._error_log_state[key] = (now, 0)
+
     async def _handle_event(self, event_name: str, data: bytes | None = None) -> JsonValue | None:
         results = []
         if event_name not in self.filter_events_log:
@@ -410,11 +443,7 @@ class BasePocketOptionClient:
                 results.append(result)
 
             except Exception:
-                self.logger.exception(
-                    "Error on handler %s, %s",
-                    handler["name"],
-                    get_function_full_name(handler["callback"]),
-                )
+                self._log_handler_error(handler["name"], get_function_full_name(handler["callback"]))
             else:
                 if event_name not in self.filter_events_log:
                     self.logger.debug(
