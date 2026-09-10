@@ -12,23 +12,28 @@ Prerequisites `deploy/setup.sh` can't do for you:
 - nginx must already be installed and running (it already is, for your other projects).
 - `.env` must exist with real `PO_SESSION`/`PO_UID` filled in.
 
-Steps:
+Steps, on the VPS:
 
-1. Get this repo onto the VPS (`git clone`/`git pull`, or `rsync`).
-2. Copy `.env.example` to `.env` and fill in at least `PO_SESSION`/`PO_UID`.
-3. Run the setup script, with sudo, from inside the repo:
-   ```bash
-   sudo bash deploy/setup.sh
-   ```
-   This installs certbot (+ its nginx plugin) and a dedicated Redis instance, adds an
-   nginx site for `datafeedcl.xyz` (a new file in `sites-available`/`sites-enabled` —
-   your other projects' nginx sites are untouched), obtains the Let's Encrypt
-   certificate, installs the systemd service (with the resource caps below), and
-   starts everything. Safe to re-run — each step skips work already done, so if it
-   stops partway (e.g. `.env` wasn't filled in yet) just fill that in and re-run the
-   same command.
-4. Verify: `https://datafeedcl.xyz/` should load the dashboard, and prices should
-   start streaming (confirms the `/ws` WebSocket upgrade is passing through nginx).
+```bash
+git clone https://github.com/towoju5/pocket_option-ws-rates-scraper.git
+cd pocket_option-ws-rates-scraper
+cp .env.example .env       # fill in PO_SESSION/PO_UID
+sudo bash deploy/setup.sh
+```
+
+(Already have it cloned there? `git pull`/`rsync` it up to date instead of cloning fresh,
+`cd` into it, and run the same last two lines — `setup.sh` is safe to re-run, and each
+step in it skips work that's already done, so if it stops partway — e.g. `.env` wasn't
+filled in yet — just fill that in and re-run the same command.)
+
+`sudo bash deploy/setup.sh` installs certbot (+ its nginx plugin) and a dedicated Redis
+instance, adds an nginx site for `datafeedcl.xyz` (a new file in
+`sites-available`/`sites-enabled` — your other projects' nginx sites are untouched),
+obtains the Let's Encrypt certificate, installs the systemd service (with the resource
+caps below), and starts everything.
+
+Verify: `https://datafeedcl.xyz/` should load the dashboard, and prices should start
+streaming (confirms the `/ws` WebSocket upgrade is passing through nginx).
 
 `deploy/setup.sh` runs [install-redis.sh](install-redis.sh) and
 [install-systemd.sh](install-systemd.sh) for you — see those (or

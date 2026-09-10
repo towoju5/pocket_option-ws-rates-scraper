@@ -28,10 +28,20 @@ CONF_PATH="/etc/redis/${SERVICE_NAME}.conf"
 UNIT_PATH="/etc/systemd/system/${SERVICE_NAME}.service"
 DATA_DIR="/var/lib/${SERVICE_NAME}"
 
+# Re-running this (e.g. setup.sh stopped on a later step and you re-ran it) should
+# recognize an already-successful previous install and skip, not error - only treat
+# the port as a genuine conflict if something *other than our own service* holds it.
+if systemctl is-active --quiet "$SERVICE_NAME" 2>/dev/null; then
+    echo "'${SERVICE_NAME}' is already installed and running, skipping."
+    echo "  (Ping: redis-cli -p ${PORT} ping)"
+    exit 0
+fi
+
 port_in_use="$(ss -ltnH "sport = :${PORT}" 2>/dev/null | head -1 || true)"
 if [ -n "$port_in_use" ]; then
-    echo "Error: something is already listening on port ${PORT}." >&2
-    echo "  Pick a different port: sudo bash deploy/install-redis.sh <port>" >&2
+    echo "Error: something other than '${SERVICE_NAME}' is already listening on port ${PORT}." >&2
+    echo "  Check what: sudo ss -ltnp | grep ${PORT}" >&2
+    echo "  Then either stop that, or pick a different port: sudo bash deploy/install-redis.sh <port>" >&2
     exit 1
 fi
 
