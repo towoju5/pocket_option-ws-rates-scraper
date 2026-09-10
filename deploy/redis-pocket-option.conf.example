@@ -8,6 +8,11 @@ port 6380
 bind 127.0.0.1 -::1
 protected-mode yes
 
+# Required for the systemd unit's Type=notify - without this, Redis never sends the
+# "I'm ready" signal systemd is waiting for, so the service fails with a startup
+# timeout even though Redis itself came up fine.
+supervised systemd
+
 # Own data/log/pid files, distinct from the default instance's, so `apt`'s
 # system-wide Redis (if present) is never touched by this one starting/stopping.
 dir /var/lib/redis-pocket-option

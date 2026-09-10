@@ -1927,3 +1927,652 @@ socketio.exceptions.ConnectionError: One or more namespaces failed to connect:
 2026-09-11 00:16:19,032 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=0s
 2026-09-11 00:16:39,034 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=0s
 2026-09-11 00:16:59,035 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=0s
+2026-09-11 00:17:19,036 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=0s
+2026-09-11 00:17:39,039 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=0s
+2026-09-11 00:17:59,041 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=0s
+2026-09-11 00:18:19,042 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=0s
+packet queue is empty, aborting
+2026-09-11 00:18:34,631 | ERROR | packet queue is empty, aborting
+2026-09-11 00:18:39,049 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=11s
+2026-09-11 00:18:43,650 | ERROR | Task exception was never retrieved
+future: <Task finished name='Task-2949036' coro=<AsyncClient._handle_eio_message() done, defined at /home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/.venv/lib/python3.13/site-packages/socketio/async_client.py:563> exception=ValueError("invalid literal for int() with base 10: b'['")>
+Traceback (most recent call last):
+  File "/home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/.venv/lib/python3.13/site-packages/socketio/async_client.py", line 574, in _handle_eio_message
+    pkt = self.packet_class(encoded_packet=data)
+  File "/home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/.venv/lib/python3.13/site-packages/socketio/packet.py", line 43, in __init__
+    self.attachment_count = self.decode(encoded_packet) or 0
+                            ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/.venv/lib/python3.13/site-packages/socketio/packet.py", line 77, in decode
+    self.packet_type = int(ep[0:1])
+                       ~~~^^^^^^^^^
+ValueError: invalid literal for int() with base 10: b'['
+2026-09-11 00:18:59,087 | INFO | heartbeat: authorized=False subscribed_assets=156 last_tick_age=31s
+2026-09-11 00:19:08,252 | INFO | Resubscribed 156 asset(s) (0 priority, 156 paced) in 4.89s
+2026-09-11 00:19:19,093 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=6s
+2026-09-11 00:19:22,812 | WARNING | AMD_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,813 | WARNING | AMZN_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,814 | WARNING | AUDCAD_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,815 | WARNING | AUDCHF_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,816 | WARNING | AUDJPY_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,816 | WARNING | AUDNZD_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,817 | WARNING | AUDUSD_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,818 | WARNING | AUS200_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,818 | WARNING | AVAX_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,819 | WARNING | BABA_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,820 | WARNING | BCHEUR has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,821 | WARNING | BCHGBP has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,822 | WARNING | BCHJPY has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,822 | WARNING | BHDCNY_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,823 | WARNING | BITB_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,824 | WARNING | BNB-USD_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,824 | WARNING | BTCUSD_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,825 | WARNING | CADCHF_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,825 | WARNING | CADJPY_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,826 | WARNING | CHFJPY_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,826 | WARNING | CHFNOK_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,827 | WARNING | CITI_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,828 | WARNING | COIN_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,828 | WARNING | D30EUR_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,829 | WARNING | DASH_USD has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,829 | WARNING | DJI30_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,830 | WARNING | DOGE_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,830 | WARNING | DOTUSD_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,830 | WARNING | E35EUR_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,831 | WARNING | E50EUR_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,831 | WARNING | ETHUSD_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,831 | WARNING | EURCHF_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,832 | WARNING | EURGBP_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,832 | WARNING | EURHUF_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,832 | WARNING | EURNZD_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,833 | WARNING | EURRUB_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,833 | WARNING | EURTRY_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,833 | WARNING | EURUSD_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,834 | WARNING | F40EUR_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,834 | WARNING | FDX_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,834 | WARNING | GBPAUD_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,834 | WARNING | GBPJPY_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,835 | WARNING | GBPUSD_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,835 | WARNING | GME_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,835 | WARNING | IRRUSD_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,836 | WARNING | JODCNY_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,836 | WARNING | JPN225_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,836 | WARNING | KESUSD_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,836 | WARNING | LBPUSD_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,837 | WARNING | LINK_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,837 | WARNING | LTCUSD_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,837 | WARNING | MADUSD_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,838 | WARNING | MARA_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,838 | WARNING | MATIC_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,838 | WARNING | NASUSD_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,838 | WARNING | NFLX_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,838 | WARNING | NGNUSD_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,839 | WARNING | NZDJPY_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,839 | WARNING | NZDUSD_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,839 | WARNING | OMRCNY_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,839 | WARNING | PLTR_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,840 | WARNING | QARCNY_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,840 | WARNING | SARCNY_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,840 | WARNING | SOL-USD_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,840 | WARNING | SP500_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,840 | WARNING | SYPUSD_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,841 | WARNING | TNDUSD_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,841 | WARNING | TON-USD_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,841 | WARNING | TRX-USD_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,841 | WARNING | UAHUSD_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,841 | WARNING | UKBrent_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,842 | WARNING | USCrude_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,842 | WARNING | USDARS_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,842 | WARNING | USDBDT_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,842 | WARNING | USDBRL_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,843 | WARNING | USDCAD_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,843 | WARNING | USDCHF_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,843 | WARNING | USDCLP_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,843 | WARNING | USDCNH_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,844 | WARNING | USDCOP_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,844 | WARNING | USDDZD_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,844 | WARNING | USDEGP_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,844 | WARNING | USDIDR_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,844 | WARNING | USDINR_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,845 | WARNING | USDJPY_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,845 | WARNING | USDMXN_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,845 | WARNING | USDMYR_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,845 | WARNING | USDPHP_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,845 | WARNING | USDPKR_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,846 | WARNING | USDRUB_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,846 | WARNING | USDSGD_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,846 | WARNING | USDTHB_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,846 | WARNING | USDVND_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,846 | WARNING | VISA_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,847 | WARNING | VIX_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,847 | WARNING | XAGUSD_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,847 | WARNING | XAUUSD_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,847 | WARNING | XNGUSD_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,847 | WARNING | XPDUSD_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,847 | WARNING | XPTUSD_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,848 | WARNING | YERUSD_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,848 | WARNING | ZARUSD_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,848 | WARNING | BTCGBP has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,848 | WARNING | BTCJPY has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,848 | WARNING | BTCUSD has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,849 | WARNING | 100GBP has had no ticks for 56s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,849 | WARNING | AUDCAD has had no ticks for 56s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,849 | WARNING | AUDCHF has had no ticks for 56s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,849 | WARNING | AUDJPY has had no ticks for 56s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,849 | WARNING | AUDUSD has had no ticks for 56s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,850 | WARNING | AUS200 has had no ticks for 56s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,850 | WARNING | CAC40 has had no ticks for 56s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,850 | WARNING | CADCHF has had no ticks for 56s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,850 | WARNING | CADJPY has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,850 | WARNING | CHFJPY has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,850 | WARNING | D30EUR has had no ticks for 56s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,851 | WARNING | DJI30 has had no ticks for 56s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,851 | WARNING | E50EUR has had no ticks for 56s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,851 | WARNING | EURCHF has had no ticks for 56s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,851 | WARNING | EURGBP has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,851 | WARNING | EURJPY has had no ticks for 56s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,852 | WARNING | EURUSD has had no ticks for 56s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,852 | WARNING | GBPAUD has had no ticks for 56s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,852 | WARNING | GBPCAD has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,852 | WARNING | GBPCHF has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,853 | WARNING | GBPJPY has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,853 | WARNING | GBPUSD has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,853 | WARNING | H33HKD has had no ticks for 56s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,853 | WARNING | JPN225 has had no ticks for 56s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,853 | WARNING | LNKUSD has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,854 | WARNING | NASUSD has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,854 | WARNING | SP500 has had no ticks for 56s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,854 | WARNING | USDCHF has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,854 | WARNING | ETHUSD has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,854 | WARNING | USDCAD has had no ticks for 56s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,855 | WARNING | USDJPY has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,855 | WARNING | EURJPY_otc has had no ticks for 55s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,855 | WARNING | AEX25 has had no ticks for 56s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,855 | WARNING | E35EUR has had no ticks for 56s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,855 | WARNING | F40EUR has had no ticks for 56s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:22,855 | WARNING | SMI20 has had no ticks for 56s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:19:39,106 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=3s
+packet queue is empty, aborting
+2026-09-11 00:19:52,870 | ERROR | packet queue is empty, aborting
+2026-09-11 00:19:59,139 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=23s
+2026-09-11 00:20:06,671 | ERROR | Task exception was never retrieved
+future: <Task finished name='Task-2949734' coro=<AsyncClient._handle_eio_message() done, defined at /home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/.venv/lib/python3.13/site-packages/socketio/async_client.py:563> exception=ValueError("invalid literal for int() with base 10: b'{'")>
+Traceback (most recent call last):
+  File "/home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/.venv/lib/python3.13/site-packages/socketio/async_client.py", line 574, in _handle_eio_message
+    pkt = self.packet_class(encoded_packet=data)
+  File "/home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/.venv/lib/python3.13/site-packages/socketio/packet.py", line 43, in __init__
+    self.attachment_count = self.decode(encoded_packet) or 0
+                            ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/.venv/lib/python3.13/site-packages/socketio/packet.py", line 77, in decode
+    self.packet_type = int(ep[0:1])
+                       ~~~^^^^^^^^^
+ValueError: invalid literal for int() with base 10: b'{'
+2026-09-11 00:20:19,141 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=2s
+2026-09-11 00:20:22,347 | INFO | Resubscribed 156 asset(s) (0 priority, 156 paced) in 4.93s
+2026-09-11 00:20:39,143 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=0s
+packet queue is empty, aborting
+2026-09-11 00:20:52,318 | ERROR | packet queue is empty, aborting
+2026-09-11 00:20:52,651 | ERROR | Task exception was never retrieved
+future: <Task finished name='Task-2951720' coro=<AsyncClient._handle_eio_message() done, defined at /home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/.venv/lib/python3.13/site-packages/socketio/async_client.py:563> exception=ValueError("invalid literal for int() with base 10: b'{'")>
+Traceback (most recent call last):
+  File "/home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/.venv/lib/python3.13/site-packages/socketio/async_client.py", line 574, in _handle_eio_message
+    pkt = self.packet_class(encoded_packet=data)
+  File "/home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/.venv/lib/python3.13/site-packages/socketio/packet.py", line 43, in __init__
+    self.attachment_count = self.decode(encoded_packet) or 0
+                            ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/.venv/lib/python3.13/site-packages/socketio/packet.py", line 77, in decode
+    self.packet_type = int(ep[0:1])
+                       ~~~^^^^^^^^^
+ValueError: invalid literal for int() with base 10: b'{'
+2026-09-11 00:20:59,145 | INFO | heartbeat: authorized=False subscribed_assets=156 last_tick_age=9s
+2026-09-11 00:21:06,618 | INFO | Resubscribed 156 asset(s) (0 priority, 156 paced) in 4.92s
+2026-09-11 00:21:19,146 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=1s
+2026-09-11 00:21:39,147 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=1s
+packet queue is empty, aborting
+2026-09-11 00:21:46,128 | ERROR | packet queue is empty, aborting
+2026-09-11 00:21:46,223 | ERROR | Task exception was never retrieved
+future: <Task finished name='Task-2953026' coro=<AsyncClient._handle_eio_message() done, defined at /home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/.venv/lib/python3.13/site-packages/socketio/async_client.py:563> exception=ValueError("invalid literal for int() with base 10: b'{'")>
+Traceback (most recent call last):
+  File "/home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/.venv/lib/python3.13/site-packages/socketio/async_client.py", line 574, in _handle_eio_message
+    pkt = self.packet_class(encoded_packet=data)
+  File "/home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/.venv/lib/python3.13/site-packages/socketio/packet.py", line 43, in __init__
+    self.attachment_count = self.decode(encoded_packet) or 0
+                            ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/.venv/lib/python3.13/site-packages/socketio/packet.py", line 77, in decode
+    self.packet_type = int(ep[0:1])
+                       ~~~^^^^^^^^^
+ValueError: invalid literal for int() with base 10: b'{'
+2026-09-11 00:21:59,148 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=2s
+2026-09-11 00:22:00,344 | INFO | Resubscribed 156 asset(s) (0 priority, 156 paced) in 4.89s
+2026-09-11 00:22:19,151 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=0s
+2026-09-11 00:22:39,153 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=0s
+2026-09-11 00:22:59,154 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=0s
+2026-09-11 00:23:19,156 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=0s
+2026-09-11 00:23:39,157 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=0s
+2026-09-11 00:23:59,181 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=7s
+2026-09-11 00:24:19,182 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=0s
+2026-09-11 00:24:39,190 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=13s
+packet queue is empty, aborting
+2026-09-11 00:24:46,173 | ERROR | packet queue is empty, aborting
+2026-09-11 00:24:59,214 | INFO | heartbeat: authorized=False subscribed_assets=156 last_tick_age=33s
+2026-09-11 00:25:02,979 | WARNING | Ignoring malformed 'updateStream' payload: '0{"sid":"yC8uhhnWDAqxSIRaBshp"}'
+2026-09-11 00:25:02,979 | WARNING | Ignoring malformed 'updateStream' payload: '0{"sid":"yC8uhhnWDAqxSIRaBshp"}'
+2026-09-11 00:25:03,840 | ERROR | Upstream PocketOption connection failed; retrying in 5s
+Traceback (most recent call last):
+  File "/home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/examples/webapp.py", line 1017, in run
+    await client.connect(Regions.DEMO)
+  File "/home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/pocket_option/client.py", line 386, in connect
+    await self.sio.connect(
+    ...<9 lines>...
+    )
+  File "/home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/.venv/lib/python3.13/site-packages/socketio/async_client.py", line 179, in connect
+    raise exceptions.ConnectionError(
+        'One or more namespaces failed to connect: '
+        + ', '.join(self.failed_namespaces))
+socketio.exceptions.ConnectionError: One or more namespaces failed to connect: 
+2026-09-11 00:25:19,215 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=4s
+2026-09-11 00:25:19,789 | INFO | Resubscribed 156 asset(s) (0 priority, 156 paced) in 4.88s
+2026-09-11 00:25:22,884 | WARNING | #AAPL_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,885 | WARNING | #AXP_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,886 | WARNING | #BA_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,887 | WARNING | #CSCO_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,888 | WARNING | #FB_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,888 | WARNING | #INTC_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,889 | WARNING | #JNJ_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,890 | WARNING | #MCD_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,890 | WARNING | #MSFT_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,891 | WARNING | #PFE_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,892 | WARNING | #TSLA_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,892 | WARNING | #XOM_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,893 | WARNING | 100GBP_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,894 | WARNING | ADA-USD_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,894 | WARNING | AEDCNY_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,895 | WARNING | AMD_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,895 | WARNING | AMZN_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,896 | WARNING | AUDCAD_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,897 | WARNING | AUDCHF_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,898 | WARNING | AUDJPY_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,898 | WARNING | AUDNZD_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,899 | WARNING | AUDUSD_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,899 | WARNING | AUS200_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,900 | WARNING | AVAX_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,901 | WARNING | BABA_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,901 | WARNING | BCHEUR has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,902 | WARNING | BCHGBP has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,903 | WARNING | BCHJPY has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,903 | WARNING | BHDCNY_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,904 | WARNING | BITB_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,905 | WARNING | BNB-USD_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,906 | WARNING | BTCUSD_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,906 | WARNING | CADCHF_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,907 | WARNING | CADJPY_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,908 | WARNING | CHFJPY_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,908 | WARNING | CHFNOK_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,909 | WARNING | CITI_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,910 | WARNING | COIN_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,910 | WARNING | D30EUR_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,911 | WARNING | DASH_USD has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,912 | WARNING | DJI30_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,913 | WARNING | DOGE_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,913 | WARNING | DOTUSD_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,914 | WARNING | E35EUR_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,914 | WARNING | E50EUR_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,915 | WARNING | ETHUSD_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,915 | WARNING | EURCHF_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,916 | WARNING | EURGBP_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,916 | WARNING | EURHUF_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,917 | WARNING | EURNZD_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,917 | WARNING | EURRUB_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,918 | WARNING | EURTRY_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,918 | WARNING | EURUSD_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,919 | WARNING | F40EUR_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,919 | WARNING | FDX_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,919 | WARNING | GBPAUD_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,920 | WARNING | GBPJPY_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,920 | WARNING | GBPUSD_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,921 | WARNING | GME_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,921 | WARNING | IRRUSD_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,922 | WARNING | JODCNY_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,922 | WARNING | JPN225_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,922 | WARNING | KESUSD_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,923 | WARNING | LBPUSD_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,923 | WARNING | LINK_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,924 | WARNING | LTCUSD_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,924 | WARNING | MADUSD_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,924 | WARNING | MARA_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,924 | WARNING | MATIC_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,925 | WARNING | NASUSD_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,925 | WARNING | NFLX_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,925 | WARNING | NGNUSD_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,926 | WARNING | NZDJPY_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,926 | WARNING | NZDUSD_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,926 | WARNING | OMRCNY_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,927 | WARNING | PLTR_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,927 | WARNING | QARCNY_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,927 | WARNING | SARCNY_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,928 | WARNING | SOL-USD_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,928 | WARNING | SP500_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,928 | WARNING | SYPUSD_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,929 | WARNING | TNDUSD_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,929 | WARNING | TON-USD_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,929 | WARNING | TRX-USD_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,929 | WARNING | UAHUSD_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,930 | WARNING | UKBrent_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,930 | WARNING | USCrude_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,930 | WARNING | USDARS_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,930 | WARNING | USDBDT_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,931 | WARNING | USDBRL_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,931 | WARNING | USDCAD_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,931 | WARNING | USDCHF_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,931 | WARNING | USDCLP_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,932 | WARNING | USDCNH_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,932 | WARNING | USDCOP_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,932 | WARNING | USDDZD_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,933 | WARNING | USDEGP_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,933 | WARNING | USDIDR_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,933 | WARNING | USDINR_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,933 | WARNING | USDJPY_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,933 | WARNING | USDMXN_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,934 | WARNING | USDMYR_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,934 | WARNING | USDPHP_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,934 | WARNING | USDPKR_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,934 | WARNING | USDRUB_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,935 | WARNING | USDSGD_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,935 | WARNING | USDTHB_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,935 | WARNING | USDVND_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,935 | WARNING | VISA_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,936 | WARNING | VIX_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,936 | WARNING | XAGUSD_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,936 | WARNING | XAUUSD_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,936 | WARNING | XNGUSD_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,936 | WARNING | XPDUSD_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,937 | WARNING | XPTUSD_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,937 | WARNING | YERUSD_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,937 | WARNING | ZARUSD_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,937 | WARNING | BTCGBP has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,937 | WARNING | BTCJPY has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,938 | WARNING | BTCUSD has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,938 | WARNING | 100GBP has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,938 | WARNING | AUDCAD has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,938 | WARNING | AUDCHF has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,938 | WARNING | AUDJPY has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,938 | WARNING | AUDUSD has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,939 | WARNING | AUS200 has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,939 | WARNING | CAC40 has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,939 | WARNING | CADCHF has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,939 | WARNING | CADJPY has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,939 | WARNING | CHFJPY has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,939 | WARNING | D30EUR has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,940 | WARNING | DJI30 has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,940 | WARNING | E50EUR has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,940 | WARNING | EURCHF has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,940 | WARNING | EURGBP has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,940 | WARNING | EURJPY has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,940 | WARNING | EURUSD has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,940 | WARNING | GBPAUD has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,941 | WARNING | GBPCAD has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,941 | WARNING | GBPCHF has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,941 | WARNING | GBPJPY has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,941 | WARNING | GBPUSD has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,941 | WARNING | H33HKD has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,941 | WARNING | JPN225 has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,942 | WARNING | LNKUSD has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,942 | WARNING | NASUSD has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,942 | WARNING | SP500 has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,942 | WARNING | USDCHF has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,942 | WARNING | ETHUSD has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,942 | WARNING | USDCAD has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,943 | WARNING | USDJPY has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,943 | WARNING | EURJPY_otc has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,943 | WARNING | AEX25 has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,943 | WARNING | E35EUR has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,943 | WARNING | F40EUR has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:22,944 | WARNING | SMI20 has had no ticks for 57s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:25:39,216 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=2s
+packet queue is empty, aborting
+2026-09-11 00:25:52,959 | ERROR | packet queue is empty, aborting
+2026-09-11 00:25:59,249 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=22s
+2026-09-11 00:26:08,548 | ERROR | Task exception was never retrieved
+future: <Task finished name='Task-3046208' coro=<AsyncClient._handle_eio_message() done, defined at /home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/.venv/lib/python3.13/site-packages/socketio/async_client.py:563> exception=ValueError("invalid literal for int() with base 10: b'{'")>
+Traceback (most recent call last):
+  File "/home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/.venv/lib/python3.13/site-packages/socketio/async_client.py", line 574, in _handle_eio_message
+    pkt = self.packet_class(encoded_packet=data)
+  File "/home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/.venv/lib/python3.13/site-packages/socketio/packet.py", line 43, in __init__
+    self.attachment_count = self.decode(encoded_packet) or 0
+                            ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/.venv/lib/python3.13/site-packages/socketio/packet.py", line 77, in decode
+    self.packet_type = int(ep[0:1])
+                       ~~~^^^^^^^^^
+ValueError: invalid literal for int() with base 10: b'{'
+2026-09-11 00:26:19,250 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=0s
+2026-09-11 00:26:22,502 | INFO | Resubscribed 156 asset(s) (0 priority, 156 paced) in 4.90s
+2026-09-11 00:26:39,251 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=0s
+packet queue is empty, aborting
+2026-09-11 00:26:52,474 | ERROR | packet queue is empty, aborting
+2026-09-11 00:26:52,592 | ERROR | Task exception was never retrieved
+future: <Task finished name='Task-3047104' coro=<AsyncClient._handle_eio_message() done, defined at /home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/.venv/lib/python3.13/site-packages/socketio/async_client.py:563> exception=ValueError("invalid literal for int() with base 10: b'{'")>
+Traceback (most recent call last):
+  File "/home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/.venv/lib/python3.13/site-packages/socketio/async_client.py", line 574, in _handle_eio_message
+    pkt = self.packet_class(encoded_packet=data)
+  File "/home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/.venv/lib/python3.13/site-packages/socketio/packet.py", line 43, in __init__
+    self.attachment_count = self.decode(encoded_packet) or 0
+                            ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/.venv/lib/python3.13/site-packages/socketio/packet.py", line 77, in decode
+    self.packet_type = int(ep[0:1])
+                       ~~~^^^^^^^^^
+ValueError: invalid literal for int() with base 10: b'{'
+2026-09-11 00:26:59,256 | INFO | heartbeat: authorized=False subscribed_assets=156 last_tick_age=8s
+2026-09-11 00:27:12,095 | INFO | Resubscribed 156 asset(s) (0 priority, 156 paced) in 4.89s
+2026-09-11 00:27:19,257 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=2s
+2026-09-11 00:27:39,259 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=0s
+packet queue is empty, aborting
+2026-09-11 00:27:46,698 | ERROR | packet queue is empty, aborting
+2026-09-11 00:27:46,852 | ERROR | Task exception was never retrieved
+future: <Task finished name='Task-3048405' coro=<AsyncClient._handle_eio_message() done, defined at /home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/.venv/lib/python3.13/site-packages/socketio/async_client.py:563> exception=ValueError("invalid literal for int() with base 10: b'{'")>
+Traceback (most recent call last):
+  File "/home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/.venv/lib/python3.13/site-packages/socketio/async_client.py", line 574, in _handle_eio_message
+    pkt = self.packet_class(encoded_packet=data)
+  File "/home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/.venv/lib/python3.13/site-packages/socketio/packet.py", line 43, in __init__
+    self.attachment_count = self.decode(encoded_packet) or 0
+                            ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/.venv/lib/python3.13/site-packages/socketio/packet.py", line 77, in decode
+    self.packet_type = int(ep[0:1])
+                       ~~~^^^^^^^^^
+ValueError: invalid literal for int() with base 10: b'{'
+2026-09-11 00:27:59,260 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=2s
+2026-09-11 00:28:02,429 | INFO | Resubscribed 156 asset(s) (0 priority, 156 paced) in 4.90s
+2026-09-11 00:28:19,264 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=4s
+2026-09-11 00:28:39,264 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=0s
+2026-09-11 00:28:59,265 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=1s
+2026-09-11 00:29:03,576 | INFO | Resubscribed 156 asset(s) (0 priority, 156 paced) in 4.88s
+2026-09-11 00:29:19,267 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=1s
+2026-09-11 00:29:39,269 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=0s
+packet queue is empty, aborting
+2026-09-11 00:29:46,701 | ERROR | packet queue is empty, aborting
+2026-09-11 00:29:56,572 | ERROR | Upstream PocketOption connection failed; retrying in 5s
+Traceback (most recent call last):
+  File "/home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/examples/webapp.py", line 1017, in run
+    await client.connect(Regions.DEMO)
+  File "/home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/pocket_option/client.py", line 386, in connect
+    await self.sio.connect(
+    ...<9 lines>...
+    )
+  File "/home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/.venv/lib/python3.13/site-packages/socketio/async_client.py", line 179, in connect
+    raise exceptions.ConnectionError(
+        'One or more namespaces failed to connect: '
+        + ', '.join(self.failed_namespaces))
+socketio.exceptions.ConnectionError: One or more namespaces failed to connect: 
+2026-09-11 00:29:59,278 | INFO | heartbeat: authorized=False subscribed_assets=156 last_tick_age=13s
+2026-09-11 00:30:07,952 | ERROR | Upstream PocketOption connection failed; retrying in 5s
+Traceback (most recent call last):
+  File "/home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/examples/webapp.py", line 1017, in run
+    await client.connect(Regions.DEMO)
+  File "/home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/pocket_option/client.py", line 386, in connect
+    await self.sio.connect(
+    ...<9 lines>...
+    )
+  File "/home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/.venv/lib/python3.13/site-packages/socketio/async_client.py", line 179, in connect
+    raise exceptions.ConnectionError(
+        'One or more namespaces failed to connect: '
+        + ', '.join(self.failed_namespaces))
+socketio.exceptions.ConnectionError: One or more namespaces failed to connect: 
+2026-09-11 00:30:19,280 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=2s
+2026-09-11 00:30:22,521 | INFO | Resubscribed 156 asset(s) (0 priority, 156 paced) in 4.88s
+2026-09-11 00:30:38,029 | WARNING | AMZN_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,030 | WARNING | AUDCAD_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,030 | WARNING | AUDCHF_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,031 | WARNING | AUDJPY_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,031 | WARNING | AUDNZD_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,031 | WARNING | AUDUSD_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,031 | WARNING | AUS200_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,032 | WARNING | AVAX_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,032 | WARNING | BABA_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,032 | WARNING | BCHEUR has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,032 | WARNING | BCHGBP has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,032 | WARNING | BCHJPY has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,033 | WARNING | BHDCNY_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,033 | WARNING | BITB_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,033 | WARNING | BNB-USD_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,033 | WARNING | BTCUSD_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,033 | WARNING | CADCHF_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,034 | WARNING | CADJPY_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,034 | WARNING | CHFJPY_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,034 | WARNING | CHFNOK_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,034 | WARNING | CITI_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,035 | WARNING | COIN_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,035 | WARNING | D30EUR_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,035 | WARNING | DASH_USD has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,035 | WARNING | DJI30_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,036 | WARNING | DOGE_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,036 | WARNING | DOTUSD_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,036 | WARNING | E35EUR_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,036 | WARNING | E50EUR_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,036 | WARNING | ETHUSD_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,037 | WARNING | EURCHF_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,037 | WARNING | EURGBP_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,037 | WARNING | EURHUF_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,037 | WARNING | EURNZD_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,038 | WARNING | EURRUB_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,038 | WARNING | EURTRY_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,038 | WARNING | EURUSD_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,038 | WARNING | F40EUR_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,038 | WARNING | FDX_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,039 | WARNING | GBPAUD_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,039 | WARNING | GBPJPY_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,039 | WARNING | GBPUSD_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,039 | WARNING | GME_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,039 | WARNING | IRRUSD_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,040 | WARNING | JODCNY_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,040 | WARNING | JPN225_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,040 | WARNING | KESUSD_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,040 | WARNING | LBPUSD_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,041 | WARNING | LINK_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,041 | WARNING | LTCUSD_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,041 | WARNING | MADUSD_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,041 | WARNING | MARA_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,042 | WARNING | MATIC_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,042 | WARNING | NASUSD_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,042 | WARNING | NFLX_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,042 | WARNING | NGNUSD_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,043 | WARNING | NZDJPY_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,043 | WARNING | NZDUSD_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,043 | WARNING | OMRCNY_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,043 | WARNING | PLTR_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,043 | WARNING | QARCNY_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,044 | WARNING | SARCNY_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,044 | WARNING | SOL-USD_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,044 | WARNING | SP500_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,044 | WARNING | SYPUSD_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,045 | WARNING | TNDUSD_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,045 | WARNING | TON-USD_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,045 | WARNING | TRX-USD_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,045 | WARNING | UAHUSD_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,045 | WARNING | UKBrent_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,046 | WARNING | USCrude_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,046 | WARNING | USDARS_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,046 | WARNING | USDBDT_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,046 | WARNING | USDBRL_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,046 | WARNING | USDCAD_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,047 | WARNING | USDCHF_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,047 | WARNING | USDCLP_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,047 | WARNING | USDCNH_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,047 | WARNING | USDCOP_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,047 | WARNING | USDDZD_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,047 | WARNING | USDEGP_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,048 | WARNING | USDIDR_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,048 | WARNING | USDINR_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,048 | WARNING | USDJPY_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,048 | WARNING | USDMXN_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,048 | WARNING | USDMYR_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,048 | WARNING | USDPHP_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,049 | WARNING | USDPKR_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,049 | WARNING | USDRUB_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,049 | WARNING | USDSGD_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,049 | WARNING | USDTHB_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,049 | WARNING | USDVND_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,049 | WARNING | VISA_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,050 | WARNING | VIX_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,050 | WARNING | XAGUSD_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,050 | WARNING | XAUUSD_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,050 | WARNING | XNGUSD_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,050 | WARNING | XPDUSD_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,050 | WARNING | XPTUSD_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,051 | WARNING | YERUSD_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,051 | WARNING | ZARUSD_otc has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,051 | WARNING | BTCGBP has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,051 | WARNING | BTCJPY has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,051 | WARNING | BTCUSD has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,052 | WARNING | 100GBP has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,052 | WARNING | AUDCAD has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,052 | WARNING | AUDCHF has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,052 | WARNING | AUDJPY has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,052 | WARNING | AUDUSD has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,053 | WARNING | AUS200 has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,053 | WARNING | CAC40 has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,053 | WARNING | CADCHF has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,053 | WARNING | CADJPY has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,054 | WARNING | CHFJPY has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,054 | WARNING | D30EUR has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,054 | WARNING | DJI30 has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,054 | WARNING | E50EUR has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,054 | WARNING | EURCHF has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,055 | WARNING | EURGBP has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,055 | WARNING | EURJPY has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,055 | WARNING | EURUSD has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,055 | WARNING | GBPAUD has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,056 | WARNING | GBPCAD has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,056 | WARNING | GBPCHF has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,056 | WARNING | GBPJPY has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,056 | WARNING | GBPUSD has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,056 | WARNING | H33HKD has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,056 | WARNING | JPN225 has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,057 | WARNING | LNKUSD has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,057 | WARNING | NASUSD has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,057 | WARNING | SP500 has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,057 | WARNING | USDCHF has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,057 | WARNING | ETHUSD has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,057 | WARNING | USDCAD has had no ticks for 52s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,058 | WARNING | USDJPY has had no ticks for 110s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,058 | WARNING | EURJPY_otc has had no ticks for 110s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,058 | WARNING | AEX25 has had no ticks for 110s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,058 | WARNING | E35EUR has had no ticks for 110s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,058 | WARNING | F40EUR has had no ticks for 110s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:38,058 | WARNING | SMI20 has had no ticks for 110s while other assets kept flowing; re-nudging subscription
+2026-09-11 00:30:39,286 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=14s
+2026-09-11 00:30:59,290 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=1s
+packet queue is empty, aborting
+2026-09-11 00:31:08,099 | ERROR | packet queue is empty, aborting
+2026-09-11 00:31:10,398 | ERROR | Task exception was never retrieved
+future: <Task finished name='Task-3077051' coro=<AsyncClient._handle_eio_message() done, defined at /home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/.venv/lib/python3.13/site-packages/socketio/async_client.py:563> exception=ValueError("invalid literal for int() with base 10: b'{'")>
+Traceback (most recent call last):
+  File "/home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/.venv/lib/python3.13/site-packages/socketio/async_client.py", line 574, in _handle_eio_message
+    pkt = self.packet_class(encoded_packet=data)
+  File "/home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/.venv/lib/python3.13/site-packages/socketio/packet.py", line 43, in __init__
+    self.attachment_count = self.decode(encoded_packet) or 0
+                            ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/.venv/lib/python3.13/site-packages/socketio/packet.py", line 77, in decode
+    self.packet_type = int(ep[0:1])
+                       ~~~^^^^^^^^^
+ValueError: invalid literal for int() with base 10: b'{'
+2026-09-11 00:31:19,291 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=0s
+2026-09-11 00:31:23,941 | INFO | Resubscribed 156 asset(s) (0 priority, 156 paced) in 4.91s
+2026-09-11 00:31:39,292 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=0s
