@@ -3,3 +3,4 @@ __pycache__/
 .env
 *.log
 admin_state.json
+start_webapp.out
