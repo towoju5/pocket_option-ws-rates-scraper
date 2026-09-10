@@ -1,21 +1,35 @@
-# Add this `location` block inside the EXISTING `server { listen 443 ssl; ... }`
-# block for datafeedcl.xyz on the VPS (find it with e.g. `sudo nginx -T | less`
-# or `ls /etc/nginx/sites-enabled/`) — do NOT create a second `server` block for
-# the same domain/port, nginx will refuse to start with a duplicate.
+# deploy/setup.sh writes a real copy of this to /etc/nginx/sites-available/datafeedcl.xyz
+# and symlinks it into sites-enabled automatically - this file is here for reference /
+# manual installs (or if datafeedcl.xyz already has a server block on this box from
+# before; in that case add the `location /` block below into that existing `server {}`
+# instead of using this whole file, and don't run certbot --nginx again for a domain
+# it's already managing).
+#
+# Deliberately HTTP-only (port 80, no TLS) to start: certbot's nginx plugin edits this
+# file in place to add the HTTPS server block and cert paths once you run it (see
+# deploy/setup.sh), so there's nothing to fill in here for TLS - certbot handles it.
 #
 # The Upgrade/Connection headers are required for /ws (the WebSocket route); if
 # they're missing, the dashboard at "/" will load fine but live prices won't.
-#
-#   location / {
-#       proxy_pass http://127.0.0.1:8081;
-#       proxy_http_version 1.1;
-#       proxy_set_header Host $host;
-#       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-#       proxy_set_header X-Forwarded-Proto $scheme;
-#       proxy_set_header Upgrade $http_upgrade;
-#       proxy_set_header Connection "upgrade";
-#       proxy_read_timeout 3600s;   # keep long-lived WebSocket connections open
-#   }
-#
-# After editing:
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name datafeedcl.xyz;
+
+    location / {
+        proxy_pass http://127.0.0.1:3100;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_read_timeout 3600s;   # keep long-lived WebSocket connections open
+    }
+}
+
+# After editing by hand (skip if deploy/setup.sh wrote this for you):
+#   sudo ln -s /etc/nginx/sites-available/datafeedcl.xyz /etc/nginx/sites-enabled/
 #   sudo nginx -t && sudo systemctl reload nginx
+#   sudo certbot --nginx -d datafeedcl.xyz -m you@example.com --agree-tos --redirect

@@ -8,28 +8,30 @@ set -euo pipefail
 
 # --- Edit these -------------------------------------------------------------
 BASE_URL="https://datafeedcl.xyz"             # public URL this will be reachable at
-PORT=443                                      # port this process binds to - 443 so
-                                               # BASE_URL needs no port suffix
+PORT=3100                                     # port this process binds to (nginx
+                                               # proxies to this - see deploy/setup.sh)
 
-# --- TLS: pick at most ONE of the two options below ---------------------------
+# --- TLS: pick at most ONE of the two options below, or neither ---------------
+# This deployment (see deploy/setup.sh) uses neither: nginx already runs on this
+# VPS for other projects and owns ports 80/443, so nginx terminates TLS for
+# datafeedcl.xyz too (via certbot's nginx plugin, which setup.sh runs) and
+# reverse-proxies plain HTTP to this process on 127.0.0.1:PORT. Both options
+# below stay blank in that setup - this process never touches a certificate at
+# all in this design.
+#
 # Option A: auto-obtain (and, on renewal, auto-reload) a free cert from Let's
-# Encrypt for the domain in BASE_URL, at startup, via `sudo certbot`. Left blank
-# deliberately here: this script normally runs as a systemd service under an
-# unprivileged deploy user (see deploy/install-systemd.sh), and `sudo` has no
-# terminal to prompt on in that context - it would just hang or fail on first
-# start. deploy/setup.sh obtains the cert once, up front, running as real root
-# instead (and installs a certbot renewal hook to keep permissions/restarts
-# working on future renewals) - see Option B below, which is what that leaves
-# this script configured to use. Only fill this in instead of Option B if you're
-# running this script directly/interactively (not via systemd) with real sudo
-# access at a terminal.
+# Encrypt for the domain in BASE_URL, at startup, via `sudo certbot`. Only makes
+# sense if NOTHING else on this host owns ports 80/443 - this process would bind
+# them directly instead of going through nginx. Also only safe run
+# directly/interactively at a terminal with real sudo access, not under systemd
+# (`sudo` has no terminal to prompt on there - it would just hang or fail).
 LETSENCRYPT_EMAIL=""
 
-# Option B: point at a cert you already have (Let's Encrypt or otherwise).
-# This is what deploy/setup.sh configures: the cert it obtains via `certbot
-# certonly` up front, kept renewed by certbot's own systemd timer/cron.
-SSL_CERT_PATH="/etc/letsencrypt/live/datafeedcl.xyz/fullchain.pem"
-SSL_KEY_PATH="/etc/letsencrypt/live/datafeedcl.xyz/privkey.pem"
+# Option B: point at a cert you already have (Let's Encrypt or otherwise), and
+# have this process terminate TLS itself. Same "nothing else owns 80/443"
+# caveat as Option A.
+SSL_CERT_PATH=""
+SSL_KEY_PATH=""
 
 # Only used with Option A: if this app runs as a systemd service, name it here so
 # certbot restarts it after future renewals (this process only reads the cert at

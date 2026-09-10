@@ -26,13 +26,6 @@ ExecStart=/bin/bash /path/to/pocket_option-0.4.0/start_webapp_hosted.sh
 Restart=always
 RestartSec=5
 
-# Lets the app bind port 443 directly (start_webapp_hosted.sh terminates TLS itself -
-# see deploy/setup.sh) without running the whole service as root - only this specific
-# capability is granted, scoped to this service alone. Harmless/unused if the app ends
-# up binding a non-privileged port instead (e.g. behind a reverse proxy on 127.0.0.1).
-AmbientCapabilities=CAP_NET_BIND_SERVICE
-CapabilityBoundingSet=CAP_NET_BIND_SERVICE
-
 # Hard resource ceiling, kernel-enforced (cgroups) - not something the app's own code
 # can exceed even if a future bug leaks memory or spins the CPU. Sized for a 1GB RAM /
 # 2 vCPU VPS shared with other projects; measured steady-state here is ~100MB RSS and

@@ -259,9 +259,12 @@ bandwidth/connections for always-warm data; for a small watchlist it's negligibl
 ## Deploying to a hosted platform (making wss:// available)
 
 For a real production deployment (systemd, resource limits, a dedicated Redis instance,
-Let's Encrypt), see [deploy/README.md](deploy/README.md) and `deploy/setup.sh` — it handles
-all of that in one command and is the current recommended path. The rest of this section
-covers `start_webapp_hosted.sh` itself, which that script builds on.
+nginx + Let's Encrypt), see [deploy/README.md](deploy/README.md) and `deploy/setup.sh` — it
+handles all of that in one command and is the current recommended path for `datafeedcl.xyz`,
+which reverse-proxies through an nginx already running on that VPS for other projects (so
+this app never touches port 80/443 or a certificate at all — see Option C below). The rest
+of this section covers `start_webapp_hosted.sh` itself, and the other two options, for
+deploying somewhere *without* an existing reverse proxy in front.
 
 `./start_webapp_hosted.sh` is a production launcher: it binds on all interfaces
 (`WEBAPP_HOST=0.0.0.0`), skips auto-opening a browser, and prints the URLs you'll actually
@@ -273,12 +276,11 @@ the domain is taken from `BASE_URL`, so there's nothing else to configure. On fi
 calls `certbot certonly --standalone` (via `sudo`) to issue the cert, then points the app at
 it; on later runs it reuses the existing cert instead of re-issuing.
 
-> **Don't use this option if you'll run the app under systemd** (see below) — `sudo` has no
-> terminal to prompt on in that context, so it just hangs or fails on first start. This is
-> exactly why `deploy/setup.sh` exists: it obtains the cert once, up front, as real root
-> (interactively, before the service is even installed), then configures `start_webapp_hosted.sh`
-> to use Option B below instead. Option A here is only safe for running this script directly,
-> interactively, at a terminal with real sudo access.
+> **Don't use this option if you'll run the app under systemd** — `sudo` has no terminal to
+> prompt on in that context, so it just hangs or fails on first start. It's also mutually
+> exclusive with the `datafeedcl.xyz` setup above: `--standalone` needs port 80 completely
+> free, which isn't true once nginx is already running. Only use Option A for a domain with
+> no reverse proxy in front, run directly/interactively at a terminal with real sudo access.
 
 Requirements:
 

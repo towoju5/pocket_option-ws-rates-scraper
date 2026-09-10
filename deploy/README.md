@@ -1,15 +1,15 @@
 # Deploying to the VPS behind datafeedcl.xyz
 
-This app terminates TLS itself for `datafeedcl.xyz` (binds `0.0.0.0:443` directly,
-owns its own Let's Encrypt certificate) — no reverse proxy in front. `start_webapp_hosted.sh`
-and `.env` in this repo are already configured for that.
+nginx already runs on this VPS for other projects and owns ports 80/443, so this app
+doesn't terminate TLS itself — it binds `127.0.0.1:3100` and nginx reverse-proxies
+`datafeedcl.xyz` to it, obtaining its own Let's Encrypt certificate via certbot's nginx
+plugin. `start_webapp_hosted.sh` and `.env` in this repo are already configured for that.
 
 ## One-command setup, on the VPS
 
 Prerequisites `deploy/setup.sh` can't do for you:
 - `datafeedcl.xyz`'s DNS must already point at this server's public IP.
-- Port 80 must be free right now (certbot's standalone mode needs it briefly to prove
-  domain ownership), and port 443 free for the app itself afterwards.
+- nginx must already be installed and running (it already is, for your other projects).
 - `.env` must exist with real `PO_SESSION`/`PO_UID` filled in.
 
 Steps:
@@ -20,19 +20,22 @@ Steps:
    ```bash
    sudo bash deploy/setup.sh
    ```
-   This installs certbot + a dedicated Redis instance, obtains the Let's Encrypt
+   This installs certbot (+ its nginx plugin) and a dedicated Redis instance, adds an
+   nginx site for `datafeedcl.xyz` (a new file in `sites-available`/`sites-enabled` —
+   your other projects' nginx sites are untouched), obtains the Let's Encrypt
    certificate, installs the systemd service (with the resource caps below), and
-   starts everything. It's safe to re-run — each step skips work already done, so if
-   it stops partway (e.g. `.env` wasn't filled in yet) just fill that in and re-run
-   the same command.
+   starts everything. Safe to re-run — each step skips work already done, so if it
+   stops partway (e.g. `.env` wasn't filled in yet) just fill that in and re-run the
+   same command.
 4. Verify: `https://datafeedcl.xyz/` should load the dashboard, and prices should
-   start streaming.
+   start streaming (confirms the `/ws` WebSocket upgrade is passing through nginx).
 
 `deploy/setup.sh` runs [install-redis.sh](install-redis.sh) and
 [install-systemd.sh](install-systemd.sh) for you — see those (or
 [redis-pocket-option.conf.example](redis-pocket-option.conf.example) /
-[pocket-option-webapp.service.example](pocket-option-webapp.service.example)) if you'd
-rather do any of it by hand, or want to see exactly what gets written.
+[pocket-option-webapp.service.example](pocket-option-webapp.service.example) /
+[nginx-datafeedcl.conf.example](nginx-datafeedcl.conf.example)) if you'd rather do any
+of it by hand, or want to see exactly what gets written.
 
 ## Resource limits (shared/resource-constrained VPS)
 
@@ -45,41 +48,40 @@ want less conservative limits.
 
 ## Why it's set up this way
 
-- `start_webapp_hosted.sh` uses Option B (point at an already-obtained cert), not its
-  own built-in Option A (auto-obtain via `sudo certbot` at startup) — Option A calls
-  `sudo`, which has no terminal to prompt on when this runs as a systemd service under
-  an unprivileged user, so it would just hang or fail on first start. `setup.sh`
-  obtains the cert once, up front, as real root, then installs a certbot renewal hook
-  ([certbot-deploy-hook.sh](certbot-deploy-hook.sh)) to keep it renewed automatically.
-- Let's Encrypt's private key defaults to `0600 root:root`, unreadable by the app's own
-  unprivileged systemd user, and every renewal resets those permissions. `setup.sh`
-  creates a `pocketoption-cert` group with read access and adds the deploy user to it;
-  the renewal hook re-applies that (and restarts the service, since it only reads its
-  cert at startup) after every future renewal — so the app never needs to run as root
-  just to read its own certificate.
-- The systemd unit grants only `CAP_NET_BIND_SERVICE` (not full root) so the
-  unprivileged deploy user can still bind port 443 directly.
-- `.env` sets `WEBAPP_TRUST_PROXY=0` since there's no reverse proxy in front anymore —
-  the app sees real client IPs directly. Only set this back to `1` if you put a proxy
-  in front again (and make sure the app's own port isn't also directly reachable, or
-  this becomes spoofable via a forged `X-Forwarded-For` header).
+- The app binds `127.0.0.1:3100` — loopback-only, on a non-privileged, unlikely-to-
+  collide port — and never touches port 80/443 or a TLS certificate at all. nginx (and
+  only nginx) is internet-facing for this domain, same as it already is for your other
+  projects.
+- `certbot --nginx` (run by `setup.sh`) both obtains the certificate *and* edits the
+  nginx site to add the HTTPS server block, redirect, and renewal hook automatically —
+  nothing in this repo needs to know where the certificate files live or manage their
+  permissions, unlike a setup where the app terminates TLS itself.
+- `.env` sets `WEBAPP_TRUST_PROXY=1` so the IP allowlist and `/admin`'s "use my current
+  IP" see real visitor IPs (from `X-Forwarded-For`) instead of nginx's. Only keep this
+  "1" as long as nginx is genuinely the sole way to reach the app — port 3100 itself
+  must not be directly internet-reachable, or this becomes spoofable.
 - `.env`'s `WEBAPP_ALLOWED_CLIENTS` is blank (open access) — set it to a comma-
   separated allowlist later if you want to restrict who can reach the dashboard/API.
 - `Restart=always` in the systemd unit is what makes it "run forever": survives
   crashes, network blips, and VPS reboots, without needing a terminal/SSH session to
   stay open.
 
-## Alternative: behind an existing reverse proxy
+## Alternative: this app owns port 443 directly (no nginx)
 
-If you'd rather put nginx/Caddy in front instead (e.g. it's already terminating TLS
-for other things on the same box), that path still exists:
+Only relevant if nginx (or anything else) is *not* already using ports 80/443 on the
+target host — not the case for the current `datafeedcl.xyz` deployment, but kept here in
+case you ever deploy this elsewhere without an existing reverse proxy:
 
-1. Edit `start_webapp_hosted.sh`: blank out `SSL_CERT_PATH`/`SSL_KEY_PATH`, and set
-   `PORT=8081` (or whatever the proxy should forward to).
-2. Set `WEBAPP_TRUST_PROXY=1` in `.env` — but only once the proxy is genuinely the
-   sole way to reach the app (its own port must not be directly internet-reachable),
-   or the allowlist becomes spoofable.
-3. Add the `location` block from [nginx-datafeedcl.conf.example](nginx-datafeedcl.conf.example)
-   to the proxy's config and reload it.
-4. Run `sudo bash deploy/install-systemd.sh` directly (skip `setup.sh`'s certbot step
-   entirely - the proxy owns TLS, not this app).
+1. Edit `start_webapp_hosted.sh`: set `PORT=443`, and either fill in `LETSENCRYPT_EMAIL`
+   (if you'll run it directly/interactively — its `sudo certbot` call has no terminal to
+   prompt on under systemd) or set `SSL_CERT_PATH`/`SSL_KEY_PATH` to a cert you obtain
+   some other way (e.g. `certbot certonly --standalone`, run once by hand, up front).
+2. Add `AmbientCapabilities=CAP_NET_BIND_SERVICE` / `CapabilityBoundingSet=CAP_NET_BIND_SERVICE`
+   to the systemd unit so an unprivileged deploy user can still bind port 443.
+3. If using a cert obtained separately, you'll also need to grant the deploy user read
+   access to it (Let's Encrypt's private key defaults to `0600 root:root`, and every
+   renewal resets that) — e.g. a dedicated group plus a certbot renewal deploy-hook that
+   re-applies both the permissions and a service restart after each renewal.
+4. Set `WEBAPP_TRUST_PROXY=0` in `.env` — there's no proxy in front to spoof.
+5. Run `sudo bash deploy/install-systemd.sh` directly (skip `setup.sh` — its nginx/certbot
+   steps assume the reverse-proxy path above).
