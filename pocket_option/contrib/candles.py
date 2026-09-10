@@ -22,7 +22,7 @@ from pocket_option.utils import append_or_replace
 if typing.TYPE_CHECKING:
     from pocket_option.generated_client import PocketOptionClient
 
-__all__ = ("Candle", "CandleStorage", "MemoryCandleStorage")
+__all__ = ("Candle", "CandleStorage", "MemoryCandleStorage", "RedisCandleStorage")
 
 
 class Candle(pydantic.BaseModel):
@@ -329,6 +329,171 @@ class MemoryCandleStorage(CandleStorage):
         items.sort(key=lambda i: i.timestamp)
         if count is not None:
             items = items[-count:]
+        return items
+
+
+class RedisCandleStorage(CandleStorage):
+    """
+    Redis-backed candle storage.
+
+    Stores raw price updates in Redis instead of process memory, so they survive
+    a restart. Requires the ``redis`` extra (``pip install pocket-option[redis]``).
+
+    Each asset gets two keys:
+
+        - a sorted set of timestamps (for ordering and range queries);
+        - a hash mapping the same timestamps to their price value.
+
+    Both are trimmed together after every write so the pair never drifts out of
+    sync, and neither grows unbounded - matching the same "keep the most recent
+    max_len points" behavior as :class:`MemoryCandleStorage`, just durable.
+
+    Example:
+
+        import redis.asyncio as redis
+
+        storage = RedisCandleStorage(client, redis_client=redis.from_url("redis://localhost:6379/0"))
+        ...
+        candles = await storage.get_candles(Asset.AUDCAD_otc, timeframe=60)
+    """
+
+    def __init__(
+        self,
+        client: PocketOptionClient,
+        *,
+        redis_client: typing.Any = None,
+        redis_url: str | None = None,
+        key_prefix: str = "po:candles",
+        max_len: int = 10_000,
+    ) -> None:
+        """
+        :param client: Owning PocketOption client.
+        :type client: PocketOptionClient
+
+        :param redis_client: An existing ``redis.asyncio.Redis`` instance to reuse
+            (e.g. one already shared elsewhere in the app). Takes priority over
+            ``redis_url`` if both are given.
+        :type redis_client: redis.asyncio.Redis | None
+
+        :param redis_url: Connection URL, used to build a client if ``redis_client``
+            isn't given. Falls back to the ``REDIS_URL`` environment variable, then
+            ``redis://localhost:6379/0``.
+        :type redis_url: str | None
+
+        :param key_prefix: Redis key namespace, in case multiple things share one
+            Redis instance/database.
+        :type key_prefix: str
+
+        :param max_len: Maximum number of stored price updates per asset.
+        :type max_len: int
+        """
+        super().__init__(client)
+        try:
+            import redis.asyncio as redis_asyncio
+        except ImportError as exc:
+            raise ImportError(
+                "RedisCandleStorage requires the 'redis' package - install it with "
+                "`pip install pocket-option[redis]` or `pip install redis`.",
+            ) from exc
+
+        if redis_client is not None:
+            self._redis = redis_client
+        else:
+            url = redis_url or os.environ.get("REDIS_URL", "redis://localhost:6379/0")
+            self._redis = redis_asyncio.from_url(url, decode_responses=True)
+
+        self._key_prefix = key_prefix
+        self._max_len = max_len
+
+    def set_max_len(self, max_len: int) -> None:
+        """
+        Change the maximum number of stored price updates per asset.
+
+        Applies to future writes - existing data beyond the new limit is trimmed
+        the next time that asset receives a tick, not immediately (unlike
+        :meth:`MemoryCandleStorage.set_max_len`, this can't rewrite everything
+        synchronously since Redis access is async).
+
+        :param max_len: Maximum entries per asset.
+        :type max_len: int
+        """
+        self._max_len = max_len
+
+    def _zkey(self, asset: Asset) -> str:
+        return f"{self._key_prefix}:{asset.value}:z"
+
+    def _hkey(self, asset: Asset) -> str:
+        return f"{self._key_prefix}:{asset.value}:h"
+
+    @staticmethod
+    def _member(timestamp: float) -> str:
+        # A plain repr of the float is a stable, unique key per timestamp - matches
+        # append_or_replace's ["asset", "timestamp"] equality used by
+        # MemoryCandleStorage, since HSET/ZADD both naturally overwrite on a
+        # repeated member instead of duplicating.
+        return repr(timestamp)
+
+    async def get_first_item(self, asset: Asset) -> UpdateCloseValueItem | None:
+        members = await self._redis.zrange(self._zkey(asset), 0, 0)
+        if not members:
+            return None
+        value = await self._redis.hget(self._hkey(asset), members[0])
+        if value is None:
+            return None
+        return UpdateCloseValueItem(asset=asset, timestamp=float(members[0]), value=value)
+
+    async def add_item(self, item: UpdateCloseValueItem) -> None:
+        await self.add_item_bulk([item])
+
+    async def add_item_bulk(self, items: list[UpdateCloseValueItem]) -> None:
+        if not items:
+            return
+        by_asset: dict[Asset, list[UpdateCloseValueItem]] = defaultdict(list)
+        for item in items:
+            by_asset[item.asset].append(item)
+
+        for asset, asset_items in by_asset.items():
+            zkey, hkey = self._zkey(asset), self._hkey(asset)
+            zmapping = {self._member(it.timestamp): it.timestamp for it in asset_items}
+            hmapping = {self._member(it.timestamp): str(it.value) for it in asset_items}
+
+            async with self._redis.pipeline(transaction=True) as pipe:
+                pipe.zadd(zkey, zmapping)
+                pipe.hset(hkey, mapping=hmapping)
+                await pipe.execute()
+
+            count = await self._redis.zcard(zkey)
+            if count > self._max_len:
+                excess = count - self._max_len
+                victims = await self._redis.zrange(zkey, 0, excess - 1)
+                if victims:
+                    async with self._redis.pipeline(transaction=True) as pipe:
+                        pipe.zremrangebyrank(zkey, 0, excess - 1)
+                        pipe.hdel(hkey, *victims)
+                        await pipe.execute()
+
+    async def get_items(
+        self,
+        asset: Asset,
+        *,
+        start: datetime.datetime | None = None,
+        end: datetime.datetime | None = None,
+        count: int | None = None,
+    ) -> collections.abc.Iterable[UpdateCloseValueItem]:
+        min_score = start.timestamp() if start else "-inf"
+        max_score = end.timestamp() if end else "+inf"
+        members = await self._redis.zrangebyscore(self._zkey(asset), min_score, max_score)
+        if not members:
+            return []
+        if count is not None:
+            members = members[-count:]
+
+        values = await self._redis.hmget(self._hkey(asset), members)
+        items = []
+        for member, value in zip(members, values, strict=True):
+            if value is None:  # trimmed between the zset and hash reads - skip it
+                continue
+            items.append(UpdateCloseValueItem(asset=asset, timestamp=float(member), value=value))
         return items
 
 

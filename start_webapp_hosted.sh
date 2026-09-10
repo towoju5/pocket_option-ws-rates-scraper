@@ -8,24 +8,28 @@ set -euo pipefail
 
 # --- Edit these -------------------------------------------------------------
 BASE_URL="https://datafeedcl.xyz"             # public URL this will be reachable at
-PORT=8081                                     # port this process binds to
+PORT=443                                      # port this process binds to - 443 so
+                                               # BASE_URL needs no port suffix
 
 # --- TLS: pick at most ONE of the two options below ---------------------------
 # Option A: auto-obtain (and, on renewal, auto-reload) a free cert from Let's
-# Encrypt for the domain in BASE_URL. Requires: BASE_URL's DNS already points at
-# this host, port 80 is free, certbot is installed, and root/sudo. Set an email
-# to enable this — Let's Encrypt sends expiry notices to it, and issuing a cert
-# means agreeing to their Subscriber Agreement (--agree-tos, applied below).
-# Left blank: the VPS already terminates TLS for datafeedcl.xyz via its own
-# reverse proxy (see Option C below, and deploy/nginx-datafeedcl.conf.example),
-# so this process should just speak plain HTTP on 127.0.0.1 and let that proxy
-# handle certs. Only fill this in if this process itself should own the cert.
+# Encrypt for the domain in BASE_URL, at startup, via `sudo certbot`. Left blank
+# deliberately here: this script normally runs as a systemd service under an
+# unprivileged deploy user (see deploy/install-systemd.sh), and `sudo` has no
+# terminal to prompt on in that context - it would just hang or fail on first
+# start. deploy/setup.sh obtains the cert once, up front, running as real root
+# instead (and installs a certbot renewal hook to keep permissions/restarts
+# working on future renewals) - see Option B below, which is what that leaves
+# this script configured to use. Only fill this in instead of Option B if you're
+# running this script directly/interactively (not via systemd) with real sudo
+# access at a terminal.
 LETSENCRYPT_EMAIL=""
 
 # Option B: point at a cert you already have (Let's Encrypt or otherwise).
-# Leave both blank if using Option A, or if a reverse proxy in front handles TLS.
-SSL_CERT_PATH=""
-SSL_KEY_PATH=""
+# This is what deploy/setup.sh configures: the cert it obtains via `certbot
+# certonly` up front, kept renewed by certbot's own systemd timer/cron.
+SSL_CERT_PATH="/etc/letsencrypt/live/datafeedcl.xyz/fullchain.pem"
+SSL_KEY_PATH="/etc/letsencrypt/live/datafeedcl.xyz/privkey.pem"
 
 # Only used with Option A: if this app runs as a systemd service, name it here so
 # certbot restarts it after future renewals (this process only reads the cert at

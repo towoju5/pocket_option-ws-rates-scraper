@@ -1,0 +1,34 @@
+# A second, dedicated Redis instance for this app only - separate port (6380) and data
+# directory from any Redis already on the box, so this app's data never mixes with (or
+# competes for memory against) whatever else that other instance serves.
+#
+# install-redis.sh writes and enables the real copy of this automatically; see it for
+# the one-command path. This file is here for reference / manual installs.
+
+[Unit]
+Description=Dedicated Redis instance for the PocketOption web app
+After=network.target
+
+[Service]
+Type=notify
+User=redis
+Group=redis
+ExecStart=/usr/bin/redis-server /etc/redis/redis-pocket-option.conf
+ExecStop=/usr/bin/redis-cli -p 6380 shutdown
+Restart=always
+RestartSec=5
+RuntimeDirectory=redis-pocket-option
+RuntimeDirectoryMode=0755
+
+# Hard, kernel-enforced ceiling on top of maxmemory/CPUQuota in the .conf - covers
+# Redis's own process overhead beyond just the dataset, and guarantees this can't
+# compete with the shared Redis instance or your other projects for the box's 1GB RAM
+# / 2 vCPU no matter what. Comfortably above the ~96MB configured `maxmemory` and
+# measured ~9MB real-world usage.
+MemoryHigh=120M
+MemoryMax=160M
+CPUQuota=50%
+TasksMax=64
+
+[Install]
+WantedBy=multi-user.target

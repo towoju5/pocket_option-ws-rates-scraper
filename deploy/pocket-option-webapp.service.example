@@ -26,5 +26,31 @@ ExecStart=/bin/bash /path/to/pocket_option-0.4.0/start_webapp_hosted.sh
 Restart=always
 RestartSec=5
 
+# Lets the app bind port 443 directly (start_webapp_hosted.sh terminates TLS itself -
+# see deploy/setup.sh) without running the whole service as root - only this specific
+# capability is granted, scoped to this service alone. Harmless/unused if the app ends
+# up binding a non-privileged port instead (e.g. behind a reverse proxy on 127.0.0.1).
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+
+# Hard resource ceiling, kernel-enforced (cgroups) - not something the app's own code
+# can exceed even if a future bug leaks memory or spins the CPU. Sized for a 1GB RAM /
+# 2 vCPU VPS shared with other projects; measured steady-state here is ~100MB RSS and
+# well under 1 core, so this leaves generous headroom for this app while guaranteeing
+# the other projects on the box always keep at least 1 full core and ~600MB free no
+# matter what this one does.
+#   MemoryHigh: soft ceiling - the kernel throttles/reclaims before this, rather than
+#     killing outright, so a brief spike degrades gracefully instead of restarting.
+#   MemoryMax: hard ceiling - OOM-killed if exceeded; Restart=always above brings it
+#     back up clean rather than leaving it dead or letting it eat past this point.
+#   CPUQuota=100%: caps this service to the equivalent of 1 full core, so the second
+#     core is always available to your other projects regardless of load here.
+#   TasksMax: caps total threads/processes this service can spawn, as a backstop
+#     against a runaway fork/thread bomb from ever exhausting system-wide PIDs.
+MemoryHigh=300M
+MemoryMax=400M
+CPUQuota=100%
+TasksMax=256
+
 [Install]
 WantedBy=multi-user.target

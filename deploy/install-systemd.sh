@@ -29,11 +29,14 @@ if [ ! -f "$SCRIPT_DIR/.env" ]; then
     exit 1
 fi
 
-port_in_use="$(ss -ltnH "sport = :8081" 2>/dev/null | head -1 || true)"
+# Read the real port from start_webapp_hosted.sh rather than assuming 8081 - it's 443
+# for a direct-TLS setup (see deploy/setup.sh), 8081 behind a reverse proxy.
+HOSTED_PORT="$(grep -oP '^PORT=\K[0-9]+' "$SCRIPT_DIR/start_webapp_hosted.sh" 2>/dev/null || echo 8081)"
+port_in_use="$(ss -ltnH "sport = :${HOSTED_PORT}" 2>/dev/null | head -1 || true)"
 if [ -n "$port_in_use" ]; then
-    echo "Warning: something is already listening on port 8081 (likely a manually-started" >&2
-    echo "  instance). Stop it first — e.g. pkill -f 'python examples/webapp.py' — or this" >&2
-    echo "  service will fail to bind the port." >&2
+    echo "Warning: something is already listening on port ${HOSTED_PORT} (likely a manually-" >&2
+    echo "  started instance). Stop it first — e.g. pkill -f 'python examples/webapp.py' — or" >&2
+    echo "  this service will fail to bind the port." >&2
 fi
 
 echo "Installing ${UNIT_PATH}"
@@ -54,6 +57,20 @@ EnvironmentFile=${SCRIPT_DIR}/.env
 ExecStart=/bin/bash ${SCRIPT_DIR}/start_webapp_hosted.sh
 Restart=always
 RestartSec=5
+
+# Lets the app bind port 443 directly without running as root - see
+# pocket-option-webapp.service.example for details. Unused/harmless if it ends up
+# binding a non-privileged port instead.
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+
+# Hard, kernel-enforced resource ceiling - sized for a 1GB RAM / 2 vCPU VPS shared
+# with other projects. See pocket-option-webapp.service.example for the reasoning
+# behind these specific numbers.
+MemoryHigh=300M
+MemoryMax=400M
+CPUQuota=100%
+TasksMax=256
 
 [Install]
 WantedBy=multi-user.target

@@ -1,0 +1,30 @@
+# Dedicated Redis instance for this app's tick history (WEBAPP_CANDLE_STORAGE=redis),
+# separate from any Redis already running on the VPS for other projects - own port,
+# own data directory, own memory cap. install-redis.sh writes the real copy of this to
+# /etc/redis/redis-pocket-option.conf with paths filled in; edit the port below first
+# if 6380 is already taken by something else on your box.
+
+port 6380
+bind 127.0.0.1 -::1
+protected-mode yes
+
+# Own data/log/pid files, distinct from the default instance's, so `apt`'s
+# system-wide Redis (if present) is never touched by this one starting/stopping.
+dir /var/lib/redis-pocket-option
+dbfilename dump.rdb
+pidfile /run/redis-pocket-option/redis-server.pid
+logfile /var/log/redis/redis-pocket-option.log
+
+# Persistence: light periodic snapshots are enough here - this only ever holds a
+# bounded, disposable, self-trimming tick buffer (see CANDLE_HISTORY_SIZE in
+# examples/webapp.py), not anything that needs AOF-grade durability.
+save 60 1000
+save 300 100
+
+# Hard memory ceiling - our own app already self-trims every asset to
+# WEBAPP_CANDLE_HISTORY_SIZE ticks (measured ~9MB in real use for 150+ assets), so this
+# is a generous backstop, not the primary control. allkeys-lru means if it's ever
+# somehow approached, the least-recently-read keys get evicted first rather than the
+# server refusing writes or crashing.
+maxmemory 96mb
+maxmemory-policy allkeys-lru
