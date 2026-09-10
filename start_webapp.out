@@ -2576,3 +2576,27 @@ ValueError: invalid literal for int() with base 10: b'{'
 2026-09-11 00:31:19,291 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=0s
 2026-09-11 00:31:23,941 | INFO | Resubscribed 156 asset(s) (0 priority, 156 paced) in 4.91s
 2026-09-11 00:31:39,292 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=0s
+packet queue is empty, aborting
+2026-09-11 00:31:53,911 | ERROR | packet queue is empty, aborting
+2026-09-11 00:31:53,948 | ERROR | Task exception was never retrieved
+future: <Task finished name='Task-3079208' coro=<AsyncClient._handle_eio_message() done, defined at /home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/.venv/lib/python3.13/site-packages/socketio/async_client.py:563> exception=ValueError("invalid literal for int() with base 10: b'{'")>
+Traceback (most recent call last):
+  File "/home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/.venv/lib/python3.13/site-packages/socketio/async_client.py", line 574, in _handle_eio_message
+    pkt = self.packet_class(encoded_packet=data)
+  File "/home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/.venv/lib/python3.13/site-packages/socketio/packet.py", line 43, in __init__
+    self.attachment_count = self.decode(encoded_packet) or 0
+                            ~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/ignite/Documents/Personal_Projects/pocket_option-0.4.0/.venv/lib/python3.13/site-packages/socketio/packet.py", line 77, in decode
+    self.packet_type = int(ep[0:1])
+                       ~~~^^^^^^^^^
+ValueError: invalid literal for int() with base 10: b'{'
+2026-09-11 00:31:59,315 | INFO | heartbeat: authorized=False subscribed_assets=156 last_tick_age=5s
+2026-09-11 00:32:07,865 | INFO | Resubscribed 156 asset(s) (0 priority, 156 paced) in 4.90s
+2026-09-11 00:32:19,316 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=2s
+2026-09-11 00:32:39,339 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=0s
+2026-09-11 00:32:59,341 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=0s
+2026-09-11 00:33:19,343 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=0s
+2026-09-11 00:33:39,345 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=0s
+2026-09-11 00:33:59,349 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=0s
+2026-09-11 00:34:19,868 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=0s
+2026-09-11 00:34:39,894 | INFO | heartbeat: authorized=True subscribed_assets=156 last_tick_age=0s
