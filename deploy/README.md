@@ -42,14 +42,15 @@ streaming (confirms the `/ws` WebSocket upgrade is passing through nginx).
 [nginx-datafeedcl.conf.example](nginx-datafeedcl.conf.example)) if you'd rather do any
 of it by hand, or want to see exactly what gets written.
 
-## Resource limits (shared/resource-constrained VPS)
+## Resource limits (shared VPS)
 
-The systemd unit caps the app to 400MB RAM and 1 CPU core (`MemoryMax`/`CPUQuota` in
+The systemd unit caps the app at 1.5GB RAM and 1 CPU core (`MemoryMax`/`CPUQuota` in
 [pocket-option-webapp.service.example](pocket-option-webapp.service.example)), and the
-dedicated Redis instance to 160MB / half a core — both kernel-enforced, so neither can
-starve other projects on the same box no matter what goes wrong here. Tune both down
-further if your box is tighter than 1GB RAM / 2 vCPU, or up if you have more room and
-want less conservative limits.
+dedicated Redis instance at 160MB / half a core — both kernel-enforced, so neither can
+starve other projects on the same box no matter what goes wrong here. These are sized
+generously against real measured usage (~110MB / ~9MB respectively) for a 24GB RAM /
+4 vCPU box — the point is a real ceiling, not a tight squeeze. Tune both down if your
+box is smaller than that, or up if you want even more headroom.
 
 ## Why it's set up this way
 

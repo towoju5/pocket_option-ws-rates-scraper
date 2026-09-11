@@ -27,21 +27,24 @@ Restart=always
 RestartSec=5
 
 # Hard resource ceiling, kernel-enforced (cgroups) - not something the app's own code
-# can exceed even if a future bug leaks memory or spins the CPU. Sized for a 1GB RAM /
-# 2 vCPU VPS shared with other projects; measured steady-state here is ~100MB RSS and
-# well under 1 core, so this leaves generous headroom for this app while guaranteeing
-# the other projects on the box always keep at least 1 full core and ~600MB free no
-# matter what this one does.
+# can exceed even if a future bug leaks memory or spins the CPU. Sized for a 24GB RAM /
+# 4 vCPU box shared with other (production) projects; measured steady-state here is
+# ~110MB RSS and well under 1 core, so these caps are generous headroom (~14x actual
+# usage for memory) rather than a tight squeeze - the point is a real ceiling that
+# guarantees this app can never eat into what the rest of the box needs, not
+# minimizing its footprint on a box that has plenty of room.
 #   MemoryHigh: soft ceiling - the kernel throttles/reclaims before this, rather than
 #     killing outright, so a brief spike degrades gracefully instead of restarting.
 #   MemoryMax: hard ceiling - OOM-killed if exceeded; Restart=always above brings it
 #     back up clean rather than leaving it dead or letting it eat past this point.
-#   CPUQuota=100%: caps this service to the equivalent of 1 full core, so the second
-#     core is always available to your other projects regardless of load here.
+#   CPUQuota=100%: caps this service to the equivalent of 1 full core - this app is
+#     single-threaded (Python's GIL), so it physically can't use more than that anyway;
+#     on a 4-core box this guarantees the other 3 are always available regardless of
+#     load here.
 #   TasksMax: caps total threads/processes this service can spawn, as a backstop
 #     against a runaway fork/thread bomb from ever exhausting system-wide PIDs.
-MemoryHigh=300M
-MemoryMax=400M
+MemoryHigh=1G
+MemoryMax=1536M
 CPUQuota=100%
 TasksMax=256
 

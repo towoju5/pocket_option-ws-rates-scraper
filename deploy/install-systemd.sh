@@ -59,11 +59,11 @@ ExecStart=/bin/bash ${SCRIPT_DIR}/start_webapp_hosted.sh
 Restart=always
 RestartSec=5
 
-# Hard, kernel-enforced resource ceiling - sized for a 1GB RAM / 2 vCPU VPS shared
-# with other projects. See pocket-option-webapp.service.example for the reasoning
-# behind these specific numbers.
-MemoryHigh=300M
-MemoryMax=400M
+# Hard, kernel-enforced resource ceiling - sized for a 24GB RAM / 4 vCPU box shared
+# with other (production) projects. See pocket-option-webapp.service.example for the
+# reasoning behind these specific numbers.
+MemoryHigh=1G
+MemoryMax=1536M
 CPUQuota=100%
 TasksMax=256
 
