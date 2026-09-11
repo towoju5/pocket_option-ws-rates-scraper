@@ -110,7 +110,18 @@ else
 fi
 
 if [ -f "/etc/letsencrypt/live/${DOMAIN}/fullchain.pem" ]; then
-    echo "Certificate for ${DOMAIN} already exists, skipping issuance."
+    echo "Certificate for ${DOMAIN} already exists."
+    # A cert existing on disk doesn't mean nginx is actually configured to use it -
+    # e.g. it was issued earlier for some other reason (or by a previous run of this
+    # script that got interrupted before this step). Only skip the nginx-wiring step
+    # too if the site config genuinely already has an HTTPS block.
+    if grep -q "listen 443 ssl" "$NGINX_SITE" 2>/dev/null; then
+        echo "nginx already has HTTPS configured for it too, nothing to do."
+    else
+        echo "...but nginx isn't serving it yet - wiring the existing certificate in"
+        echo "(no new certificate requested, no rate limits touched)..."
+        certbot install --cert-name "$DOMAIN" --nginx --non-interactive
+    fi
 else
     echo "Requesting a certificate via certbot's nginx plugin (needs ${DOMAIN}'s DNS"
     echo "already pointing here)..."
