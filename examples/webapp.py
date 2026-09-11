@@ -177,6 +177,21 @@ ALLOWED_CLIENTS = build_allowed_ips(os.environ.get("WEBAPP_ALLOWED_CLIENTS", "")
 if ALLOWED_CLIENTS:
     logger.info("Static allowlist: %s", ", ".join(sorted(str(ip) for ip in ALLOWED_CLIENTS)))
 
+# Lets a browser on another origin (e.g. your own website's JS calling this over
+# fetch()) actually read the response - without this, GET /api/assets etc. work fine
+# from curl/a server-side script, but a browser silently blocks the response for any
+# cross-origin fetch() call, no matter how the IP allowlist above is configured (that's
+# a separate, server-side check; this is what tells the *browser* it's allowed to hand
+# the response to the page's own JS). Unset by default (safe/no change unless opted
+# into) - "*" allows any origin, or a comma-separated list to restrict it to specific
+# site(s). Only applies to the public, read-only data endpoints (see
+# CORS_PUBLIC_PATHS below) - never /admin or its API, which use cookies instead and
+# don't need or want to be embeddable cross-origin.
+_CORS_ORIGINS_RAW = os.environ.get("WEBAPP_CORS_ORIGINS", "").strip()
+CORS_ALLOW_ALL = _CORS_ORIGINS_RAW == "*"
+CORS_ORIGINS = set() if CORS_ALLOW_ALL else {o.strip() for o in _CORS_ORIGINS_RAW.split(",") if o.strip()}
+CORS_PUBLIC_PATHS = ("/api/assets", "/api/tick", "/api/candles")
+
 # ip -> {"label": original entry text, "expires_at": float | None, "added_at": float}
 dynamic_whitelist: dict[ipaddress.IPv4Address | ipaddress.IPv6Address, dict] = {}
 
@@ -220,6 +235,24 @@ async def allowlist_middleware(request: web.Request, handler):
         logger.warning("Rejected connection from %s (not whitelisted)", remote)
         raise web.HTTPForbidden(text="Access denied")
     return await handler(request)
+
+
+@web.middleware
+async def cors_middleware(request: web.Request, handler):
+    is_public_api = request.path.startswith(CORS_PUBLIC_PATHS)
+    if request.method == "OPTIONS" and is_public_api:
+        # Browsers preflight a cross-origin GET in some cases (e.g. non-default
+        # headers); respond directly rather than letting this 405 through routing.
+        resp = web.Response()
+    else:
+        resp = await handler(request)
+    if is_public_api and (CORS_ORIGINS or CORS_ALLOW_ALL):
+        origin = request.headers.get("Origin")
+        if origin and (CORS_ALLOW_ALL or origin in CORS_ORIGINS):
+            resp.headers["Access-Control-Allow-Origin"] = origin
+            resp.headers["Vary"] = "Origin"
+            resp.headers["Access-Control-Allow-Methods"] = "GET, OPTIONS"
+    return resp
 
 
 # ---------------------------------------------------------------------------
@@ -1038,7 +1071,7 @@ async def stop_client(app: web.Application):
 
 
 def create_app() -> web.Application:
-    app = web.Application(middlewares=[allowlist_middleware])
+    app = web.Application(middlewares=[cors_middleware, allowlist_middleware])
     app.router.add_get("/", index)
     app.router.add_get("/api/assets", list_assets)
     app.router.add_get("/api/whoami", whoami)

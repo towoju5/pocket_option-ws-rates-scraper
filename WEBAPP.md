@@ -1,8 +1,5 @@
 # 🖥️ Live Assets & Prices Web App
 
-`examples/webapp.py` is a small [aiohttp](https://docs.aiohttp.org) server that connects to
-PocketOption using this SDK and exposes:
-
 - `GET /` — a browser dashboard: pick assets from a searchable list, watch live prices,
   pop out a live chart per asset.
 - `GET /api/assets` — JSON snapshot of all known (enabled) assets.
@@ -27,6 +24,7 @@ By default it binds to `127.0.0.1:8081` and opens a browser tab automatically.
 | `WEBAPP_PORT`            | `8081`        | Port to listen on.                                            |
 | `WEBAPP_AUTO_OPEN`       | `1`           | Set to `0` to skip auto-opening a browser tab (useful when running headless/over SSH). |
 | `WEBAPP_ALLOWED_CLIENTS` | *(unset)*     | Comma-separated, always-allowed client list. See below. Unset (and no dynamic entries) = open access. |
+| `WEBAPP_CORS_ORIGINS`    | *(unset)*     | Lets a browser on another origin actually read responses from `/api/assets`, `/api/tick`, `/api/candles` (needed to call this from your own website's JS — see "Integrating into your own website" below). `*` allows any origin; a comma-separated list restricts it to specific site(s). Unset = no CORS headers added (current behavior unchanged) — those endpoints still work from curl/server-side code either way, this only affects browser JS on a different origin. Never applies to `/admin`/`/api/admin/*`, which use cookies instead. |
 | `WEBAPP_ADMIN_PASSWORD`  | *(unset)*     | Enables `/admin`. Unset = admin panel disabled (login returns 503). |
 | `WEBAPP_ADMIN_SESSION_HOURS` | `12`      | How long an admin login session lasts before you must log in again. |
 | `WEBAPP_ALWAYS_ON_ASSETS` | *(unset)* | Comma-separated asset symbols, or `all`, to keep streaming/buffered at all times — even with nobody connected. Unset = only streams what someone's actively watching, and stops the moment they all disconnect. See below. |
@@ -240,6 +238,105 @@ curl "https://datafeedcl.xyz/api/candles?asset=EURUSD_otc&timeframe=1&count=7200
 - Same 404-if-disabled and empty-if-never-streamed rules as `/api/tick` apply.
 - This is exactly what powers the 📈 chart button in the bundled dashboard (`GET /` — click
   any watched asset's chart icon for a live example against real data).
+
+## Integrating into your own website
+
+Everything above (`/ws`, `/api/tick`, `/api/candles`) is designed to be called directly
+from a browser tab on a *different* site, not just from this bundled dashboard or a
+server-side script — this section pulls it together into one runnable example.
+
+**Two things to configure first, both env vars on the server this app runs on:**
+
+1. **CORS** — a browser blocks your website's JS from reading `fetch()` responses from
+   another origin unless the server explicitly allows it. Set
+   `WEBAPP_CORS_ORIGINS=https://your-website.example.com` (comma-separated for multiple
+   sites, or `*` for any). This only affects the three read-only endpoints above -
+   `/admin` and its API never get CORS headers, since they're cookie-based and aren't
+   meant to be embedded. The WebSocket (`/ws`) doesn't need this at all — browsers don't
+   apply CORS to WebSocket connections, so it already works cross-origin without any
+   config.
+2. **IP allowlist** — if `WEBAPP_ALLOWED_CLIENTS` is set (or you've added entries via
+   `/admin`), remember that a browser calling this API connects **directly from each of
+   your website's visitors' own IPs**, not from your website's server. An allowlist
+   that's fine for "just me" breaks the integration for every visitor who isn't on it.
+   For a public-facing integration, either leave the allowlist open (the default) or
+   don't rely on it as your access control for this use case. If you need to restrict
+   who can see the data, do that in your own website's code instead (e.g. only render
+   the embed for logged-in users) and proxy the requests through your own backend
+   instead of calling this API directly from visitor browsers - see the note at the end
+   of this section.
+
+**Example: a live price ticker + chart on your own page**
+
+```html
+<div id="price">Connecting…</div>
+<canvas id="chart" width="400" height="150"></canvas>
+<script>
+const ASSET = "EURUSD_otc";
+const API_BASE = "https://datafeedcl.xyz";
+
+// 1. Seed with recent history so the chart isn't empty while waiting for the first tick
+fetch(`${API_BASE}/api/candles?asset=${ASSET}&timeframe=60&count=60`)
+  .then((r) => r.json())
+  .then((candles) => drawChart(candles.map((c) => c.close)));
+
+// 2. Live prices over the WebSocket
+const ws = new WebSocket(`${API_BASE.replace("https:", "wss:")}/ws`);
+ws.onopen = () => ws.send(JSON.stringify({ action: "subscribe", asset: ASSET }));
+ws.onmessage = (event) => {
+  const msg = JSON.parse(event.data);
+  if (msg.type === "history") {
+    // Same buffered history as /api/candles above, but raw ticks and pushed to you
+    // automatically on subscribe - use whichever fits your rendering better.
+    document.getElementById("price").textContent = msg.ticks.at(-1)?.value ?? "…";
+  }
+  if (msg.type === "price" && msg.asset === ASSET) {
+    document.getElementById("price").textContent = msg.value;
+  }
+};
+ws.onclose = () => {
+  document.getElementById("price").textContent = "Disconnected — reconnecting…";
+  setTimeout(() => location.reload(), 2000); // simplest reconnect strategy; see below for a real one
+};
+
+function drawChart(values) {
+  const canvas = document.getElementById("chart");
+  const ctx = canvas.getContext("2d");
+  const min = Math.min(...values), max = Math.max(...values), span = max - min || 1;
+  ctx.beginPath();
+  values.forEach((v, i) => {
+    const x = (i / (values.length - 1)) * canvas.width;
+    const y = canvas.height - ((v - min) / span) * canvas.height;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.strokeStyle = "#6fd98a";
+  ctx.stroke();
+}
+</script>
+```
+
+A few things worth carrying over from the bundled dashboard's own JS
+(`examples/webapp.py`'s `INDEX_HTML`) rather than reinventing them for a production
+integration:
+
+- **Real reconnect logic**, not `location.reload()` — see `connect()`/`ws.onclose` in
+  the dashboard's source for a proper backoff-and-retry loop, plus **re-subscribing to
+  whatever you were watching** once the socket reopens (the server starts every new
+  connection with an empty subscription set - it doesn't remember what you were
+  watching across a reconnect).
+- **The `connection` message** (`{"type": "connection", "connected": false}`) tells you
+  when the *backend's own* link to PocketOption is down, so you can show "market data
+  temporarily unavailable" instead of a price that's silently gone stale.
+- If you're rendering many assets at once, batch DOM updates rather than reflowing on
+  every single `price` message — ticks can arrive several times a second per asset.
+
+**Alternative: proxy through your own backend instead of calling this directly from
+visitor browsers.** If you want to avoid exposing `datafeedcl.xyz` to every visitor's
+browser at all (own caching, hide the data source, apply your own access control), have
+your website's *server* maintain the WebSocket connection (or poll `/api/tick`/`/api/candles`)
+and re-serve the data to your own users however you like. In that case CORS is moot
+(server-to-server calls aren't subject to it) and the IP-allowlist note above only needs
+your one server's IP whitelisted, not every visitor's.
 
 ## Keeping assets warm without a UI client
 
