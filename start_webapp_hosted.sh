@@ -45,8 +45,8 @@ cd "$SCRIPT_DIR"
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR/scripts/common.sh"
 
-setup_venv "$SCRIPT_DIR"
 load_env_file "$SCRIPT_DIR/.env"
+setup_venv "$SCRIPT_DIR"
 require_session_env
 
 if [ -z "${WEBAPP_ADMIN_PASSWORD:-}" ]; then

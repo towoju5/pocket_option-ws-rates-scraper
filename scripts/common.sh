@@ -33,9 +33,19 @@ setup_venv() {
     # shellcheck disable=SC1091
     source "$venv_dir/bin/activate"
 
+    # Callers must load_env_file before calling this, so WEBAPP_CANDLE_STORAGE (if set
+    # in .env) is available here - the 'redis' package is an optional extra (keeps it
+    # out of the base install for anyone not using this), so without this check
+    # WEBAPP_CANDLE_STORAGE=redis would install cleanly but crash on every startup with
+    # "ModuleNotFoundError: No module named 'redis'".
+    local install_target="$project_dir"
+    if [ "${WEBAPP_CANDLE_STORAGE:-}" = "redis" ]; then
+        install_target="${project_dir}[redis]"
+    fi
+
     echo "Installing dependencies..."
     pip install --quiet --upgrade pip
-    pip install --quiet -e "$project_dir"
+    pip install --quiet -e "$install_target"
 }
 
 load_env_file() {
